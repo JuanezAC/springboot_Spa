@@ -3,6 +3,7 @@ package com.proyect.final_proyect_spa4.entities;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import jakarta.persistence.Entity;
@@ -28,10 +29,12 @@ public class Cita {
     private String observacion;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private Usuario usuario;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "profesional_id", referencedColumnName = "id")
     private Profesional profesional;
 

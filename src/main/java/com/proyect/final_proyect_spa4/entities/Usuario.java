@@ -1,11 +1,16 @@
 package com.proyect.final_proyect_spa4.entities;
 
 import java.time.LocalDate;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Usuario {
@@ -17,6 +22,10 @@ public class Usuario {
     private String contraseña;
     private String rol;
     private LocalDate fechaRegistro = LocalDate.now();
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Cita> citas;
 
     public Usuario(){
     }

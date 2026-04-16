@@ -28,6 +28,10 @@ public class Profesional {
     @JsonManagedReference
     private List<HorarioDisponible> horariosDisponibles;//preguntarle al profesor si esto esta bien
 
+    @OneToMany(mappedBy = "profesional", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Cita> citas;
+
     public Profesional() {
     }
 
