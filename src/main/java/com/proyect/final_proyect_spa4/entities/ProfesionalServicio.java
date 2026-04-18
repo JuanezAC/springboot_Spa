@@ -52,4 +52,5 @@ public class ProfesionalServicio {
     public void setServicio(Servicio servicio) {
         this.servicio = servicio;
     }
+    
 }

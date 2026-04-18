@@ -60,7 +60,7 @@ public class HorarioDisponible {
         this.hora = hora;
     }
 
-    public boolean isDisponible() {
+    public boolean getDisponible() {
         return disponible;
     }
 
