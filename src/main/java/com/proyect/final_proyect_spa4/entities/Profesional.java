@@ -22,7 +22,7 @@ public class Profesional {
     private String nombre;
     private String especialidad;
     private String telefono;
-    private String email;
+    private String correo;
     private boolean estado;
 
     @OneToMany(mappedBy = "profesional", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -36,12 +36,12 @@ public class Profesional {
     public Profesional() {
     }
 
-    public Profesional(Long id, String nombre, String especialidad, String telefono, String email, boolean estado) {
+    public Profesional(Long id, String nombre, String especialidad, String telefono, String correo, boolean estado) {
         this.id = id;
         this.nombre = nombre;
         this.especialidad = especialidad;
         this.telefono = telefono;
-        this.email = email;
+        this.correo = correo;
         this.estado = estado;
     }
 
@@ -77,12 +77,12 @@ public class Profesional {
         this.telefono = telefono;
     }
 
-    public String getEmail() {
-        return email;
+    public String getCorreo() {
+        return correo;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
 	public boolean getEstado() {

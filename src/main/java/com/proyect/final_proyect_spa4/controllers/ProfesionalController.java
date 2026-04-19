@@ -1,6 +1,10 @@
 package com.proyect.final_proyect_spa4.controllers;
 
 import com.proyect.final_proyect_spa4.services.ProfesionalService;
+import com.proyect.final_proyect_spa4.services.SesionService;
+
+import jakarta.servlet.http.HttpSession;
+
 import com.proyect.final_proyect_spa4.entities.Profesional;
 
 
@@ -22,57 +26,110 @@ import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/api/profesional")
+@RequestMapping("api/profesionales")
 public class ProfesionalController {
     private final ProfesionalService profesionalService;
+    private final SesionService sesionService;
 
-    public ProfesionalController(ProfesionalService profesionalService) {
-    this.profesionalService = profesionalService;
-    
+    public ProfesionalController(ProfesionalService profesionalService, SesionService sesionService) {
+        this.profesionalService = profesionalService;
+        this.sesionService = sesionService;
     }
-    //Listar todos
+
     @GetMapping
-    public ResponseEntity<List<Profesional>> obtener(){
-        return ResponseEntity.ok(profesionalService.obtener());
+    public ResponseEntity<?> listar() {
+        return ResponseEntity.ok(profesionalService.obtenerTodos());
     }
-    //Obtener por id y revisar si existen
-    @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerId(@PathVariable Long id){
-        Profesional profesional = profesionalService.obtenerId(id);
 
-        if(profesional == null){
+    // GET /api/profesionales/{id}
+    @GetMapping("/{id}")
+    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
+        Profesional profesional = profesionalService.obtenerPorId(id);
+        
+        if (profesional == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("Mensaje", "No se encontro ningun trabajador bajo esa identificacion"));
+                .body(Map.of("mensaje", "Profesional no encontrado con el ID "));
         }
+        
         return ResponseEntity.ok(profesional);
     }
-    //Guardar
+
+    // GET /api/profesionales/servicio/{servicioId}
+    @GetMapping("/servicio/{servicioId}")
+    public ResponseEntity<?> obtenerPorServicio(@PathVariable Long servicioId) {
+        List<Profesional> profesionales = profesionalService.obtenerProfesionesPorServicio(servicioId);
+        
+        if (profesionales.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("mensaje", "No hay profesionales que ofrezcan este servicio"));
+        }
+        
+        return ResponseEntity.ok(profesionales);
+    }
+
     @PostMapping
-    public ResponseEntity<Profesional> guardar(@RequestBody Profesional profesional){
-        Profesional nuevoProfesional = profesionalService.guardar(profesional);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoProfesional);
+    public ResponseEntity<?> crear(@RequestBody Profesional profesional, HttpSession session) {
+        if (!sesionService.haySesion(session)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("mensaje", "Debe iniciar sesión"));
+        }
+        
+        if (!sesionService.esAdmin(session)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("mensaje", "Acceso denegado: Se requieren permisos de administrador"));
+        }
+
+        try {
+            return profesionalService.guardar(profesional);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of(
+                    "mensaje", "Error interno al intentar registrar el profesional",
+                    "error", e.getMessage()
+                ));
+        }
     }
-    //Actualizar
+
     @PutMapping("/{id}")
-    public ResponseEntity<?>Actualizar(@PathVariable Long id, @RequestBody Profesional profesional){
-        Profesional profesionalActualizado = profesionalService.actualizar(id, profesional);
-
-        if(profesionalActualizado == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("Mensaje", "No se encontro el profesional"));
+    public ResponseEntity<?> editar(@PathVariable Long id, @RequestBody Profesional profesional, HttpSession session) {
+        if (!sesionService.haySesion(session)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("mensaje", "Debe iniciar sesión"));
         }
-        return ResponseEntity.ok(profesionalActualizado);
+        
+        if (!sesionService.esAdmin(session)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("mensaje", "No tienes permisos para mosdificar profesionales"));
+        }
+
+        try {
+            return profesionalService.actualizar(id, profesional);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of(
+                    "mensaje", "Ocurrió un error inesperado al actualizar el profesional",
+                    "error", e.getMessage()
+                ));
+        }
     }
+    
+    // DELETE /api/profesionales/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id){
-        Profesional profesionalEliminado = profesionalService.eliminar(id);
-
-        if(profesionalEliminado == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("Mensaje", "No se encontro el profesional"));
+    public ResponseEntity<?> eliminar(@PathVariable Long id, HttpSession session) {
+        if (!sesionService.haySesion(session)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("mensaje", "Debe iniciar sesión"));
         }
-        return ResponseEntity.ok(profesionalEliminado);
+
+        if (!sesionService.esAdmin(session)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("mensaje", "No tiene permisos para eliminar profesionales"));
+        }
+
+        try {
+            // El servicio ahora maneja el borrado lógico (activo = false)
+            return profesionalService.eliminar(id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("mensaje", "Error al intentar eliminar el profesional", "error", e.getMessage()));
+        }
     }
 }
-
-

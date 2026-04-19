@@ -18,12 +18,12 @@ public class Servicio {
     private String nombre;
     private String descripcion;
     private Integer duracion; //en minutos
-    private BigDecimal precio;
+    private Double precio;
 
     public Servicio(){
     }
 
-    public Servicio(Long id, String nombre, String descripcion, Integer duracion, BigDecimal precio) {
+    public Servicio(Long id, String nombre, String descripcion, Integer duracion, Double precio) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -63,11 +63,11 @@ public class Servicio {
         this.duracion = duracion;
     }
 
-    public BigDecimal getPrecio() {
+    public Double getPrecio() {
         return precio;
     }
 
-    public void setPrecio(BigDecimal precio) {
+    public void setPrecio(Double precio) {
         this.precio = precio;
     }
 }

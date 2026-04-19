@@ -7,5 +7,5 @@ import com.proyect.final_proyect_spa4.entities.Profesional;
 
 @Repository
 public interface ProfesionalRepository extends JpaRepository<Profesional, Long> {
-
+    boolean existsByCorreo(String correo);
 }

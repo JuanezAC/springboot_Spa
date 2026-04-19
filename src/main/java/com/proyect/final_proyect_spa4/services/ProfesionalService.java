@@ -2,84 +2,154 @@ package com.proyect.final_proyect_spa4.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.proyect.final_proyect_spa4.entities.HorarioDisponible;
 import com.proyect.final_proyect_spa4.entities.Profesional;
 import com.proyect.final_proyect_spa4.repositories.HorarioRepository;
+import com.proyect.final_proyect_spa4.repositories.ProSerRepository;
 import com.proyect.final_proyect_spa4.repositories.ProfesionalRepository;
 
 @Service
 public class ProfesionalService {
 
-private final ProfesionalRepository profesionalRepository;
+    private final ProfesionalRepository profesionalRepository;
+    private final ProSerRepository proSerRepository;
 
-public ProfesionalService(ProfesionalRepository profesionalRepository, HorarioRepository horarioRepository){
-    this.profesionalRepository = profesionalRepository;
-}
+    public ProfesionalService(ProfesionalRepository profesionalRepository, ProSerRepository proSerRepository) {
+        this.profesionalRepository = profesionalRepository;
+        this.proSerRepository = proSerRepository;
+    }
 
-//Obtener todos - Listar
-public List<Profesional> obtener(){
-    return profesionalRepository.findAll();
-}
+    public List<Profesional> obtenerTodos() {
+        return profesionalRepository.findAll();
+    }
 
-//Obtener por id
-public Profesional obtenerId(Long id){
-    return profesionalRepository.findById(id).orElse(null);
-}
+    public Profesional obtenerPorId(Long id) {
+        return profesionalRepository.findById(id).orElse(null);
+    }
 
-//Guardar
-public Profesional guardar(Profesional profesional){
-    if(profesional.getHorariosDisponibles() != null){
-        for(HorarioDisponible horarioDisponible : profesional.getHorariosDisponibles()){
-            horarioDisponible.setProfesional(profesional);
+    public List<Profesional> obtenerProfesionesPorServicio(Long servicioId) {
+        return proSerRepository.findByServicioId(servicioId)
+                .stream()
+                .map(proSer -> proSer.getProfesional())
+                .collect(Collectors.toList());
+    }
+
+    public ResponseEntity<?> guardar(Profesional profesional) {
+        if (profesional.getId() != null) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("mensaje", "No se debe enviar el ID al registrar un profesional"));
         }
-    }
-return profesionalRepository.save(profesional);
-}
 
-//Actualizar
-public Profesional actualizar(Long id, Profesional profesionalActualizado){
-    Profesional profesionalExistente = obtenerId(id);
-
-    if(profesionalExistente == null){
-        return null;
-    }
-    
-    profesionalExistente.setNombre(profesionalActualizado.getNombre());
-    profesionalExistente.setEspecialidad(profesionalActualizado.getEspecialidad());
-    profesionalExistente.setEmail(profesionalActualizado.getEmail());
-    profesionalExistente.setTelefono(profesionalActualizado.getTelefono());
-    profesionalExistente.setEstado(profesionalActualizado.getEstado());
-
-    if(profesionalActualizado.getHorariosDisponibles()!= null){
-        List <HorarioDisponible> nuevosHorarios = new ArrayList<>();
-
-        for(HorarioDisponible horarioDisponible : profesionalActualizado.getHorariosDisponibles()){
-            HorarioDisponible nuevoHorario = new HorarioDisponible();
-            nuevoHorario.setFecha(horarioDisponible.getFecha());
-            nuevoHorario.setHora(horarioDisponible.getHora());
-            nuevoHorario.setDisponible(horarioDisponible.getDisponible());
-            nuevoHorario.setFecha(horarioDisponible.getFecha());
-
-            nuevosHorarios.add(nuevoHorario);
+        // Validaciones básicas
+        if (profesional.getNombre() == null || profesional.getNombre().isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("mensaje", "El nombre del profesional es obligatorio"));
         }
-        profesionalExistente.getHorariosDisponibles().addAll(nuevosHorarios);
+
+        if (profesional.getEspecialidad() == null || profesional.getEspecialidad().isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("mensaje", "La especialidad es obligatoria"));
+        }
+
+        if (profesional.getCorreo() == null || profesional.getCorreo().isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("mensaje", "El correo es obligatorio"));
+        }
+
+        String correoLimpio = profesional.getCorreo().trim().toLowerCase();
+        if (profesionalRepository.existsByCorreo(correoLimpio)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("mensaje", "Este correo ya está asignado a otro profesional"));
+        }
+        profesional.setCorreo(correoLimpio);
+
+        if (profesional.getTelefono() == null || profesional.getTelefono().isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("mensaje", "El número de teléfono es obligatorio"));
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(profesionalRepository.save(profesional));
     }
-    return profesionalRepository.save(profesionalExistente);
-}
 
-//Eliminar
-public Profesional eliminar(Long id){
-    Profesional profesionalExistente = obtenerId(id);
+    public ResponseEntity<?> actualizar(Long id, Profesional profesionalActualizado) {
+        Profesional profesionalExistente = obtenerPorId(id);
 
-    if(profesionalExistente == null){
-        return null;
+        if (profesionalExistente == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensaje", "Profesional no encontrado"));
+        }
+
+        // Validación de Nombre
+        if (profesionalActualizado.getNombre() != null) {
+            if (profesionalActualizado.getNombre().isBlank()) {
+                return ResponseEntity.badRequest().body(Map.of("mensaje", "El nombre no puede estar vacío"));
+            }
+            profesionalExistente.setNombre(profesionalActualizado.getNombre().trim());
+        }
+
+        // Validación de Especialidad
+        if (profesionalActualizado.getEspecialidad() != null) {
+            if (profesionalActualizado.getEspecialidad().isBlank()) {
+                return ResponseEntity.badRequest().body(Map.of("mensaje", "La especialidad no puede estar vacía"));
+            }
+            profesionalExistente.setEspecialidad(profesionalActualizado.getEspecialidad().trim());
+        }
+
+        // Validación de Correo
+        if (profesionalActualizado.getCorreo() != null) {
+            if (profesionalActualizado.getCorreo().isBlank()) {
+                return ResponseEntity.badRequest().body(Map.of("mensaje", "El correo no puede estar vacío"));
+            }
+
+            String correoLimpio = profesionalActualizado.getCorreo().trim().toLowerCase();
+            // Si el correo es distinto al que ya tiene, verificamos que no lo use otro
+            if (!profesionalExistente.getCorreo().equals(correoLimpio)) {
+                if (profesionalRepository.existsByCorreo(correoLimpio)) {
+                    return ResponseEntity.status(HttpStatus.CONFLICT)
+                            .body(Map.of("mensaje", "El nuevo correo ya está en uso por otro profesional"));
+                }
+                profesionalExistente.setCorreo(correoLimpio);
+            }
+        }
+
+        // Validación de Teléfono (Si se envía, no puede estar en blanco)
+        if (profesionalActualizado.getTelefono() != null) {
+            if (profesionalActualizado.getTelefono().isBlank()) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("mensaje", "El teléfono no puede quedar vacío al actualizar"));
+            }
+            profesionalExistente.setTelefono(profesionalActualizado.getTelefono().trim());
+        }
+
+        // Validación de Estado (Activo/Inactivo)
+        profesionalExistente.setEstado(profesionalActualizado.getEstado());
+
+        return ResponseEntity.ok(profesionalRepository.save(profesionalExistente));
     }
-    profesionalRepository.delete(profesionalExistente);
-    return profesionalExistente;
-}
 
+    public ResponseEntity<?> eliminar(Long id) {
+        // 1. Buscamos si existe
+        Profesional profesionalExistente = obtenerPorId(id);
 
+        if (profesionalExistente == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("mensaje", "Profesional no encontrado para desactivar"));
+        }
+
+        // 2. Verificamos si ya estaba desactivado (opcional, para ser más precisos)
+        if (!profesionalExistente.getEstado()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("mensaje", "El profesional ya se encuentra inactivo"));
+        }
+
+        // 3. Borrado Lógico: Cambiamos el estado en lugar de usar .delete()
+        profesionalExistente.setEstado(false);
+        profesionalRepository.save(profesionalExistente);
+
+        return ResponseEntity.ok(Map.of(
+                "mensaje",
+                "El profesional ha sido desactivado correctamente. No se podrán agendar nuevas citas con él, pero se conserva su historial."));
+    }
 }

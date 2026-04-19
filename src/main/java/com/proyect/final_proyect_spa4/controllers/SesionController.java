@@ -1,29 +1,24 @@
 package com.proyect.final_proyect_spa4.controllers;
 
-public class SesionController {
-
-}
-
-
-package com.proyecto.spa_1.controllers;
-
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.proyecto.spa_1.Entities.Usuario;
-import com.proyecto.spa_1.Entities.UsuarioSesion;
-import com.proyecto.spa_1.Services.SesionService;
-import com.proyecto.spa_1.Services.UsuarioService;
+import com.proyect.final_proyect_spa4.entities.Usuario;
+import com.proyect.final_proyect_spa4.entities.UsuarioSesion;
+import com.proyect.final_proyect_spa4.services.SesionService;
+import com.proyect.final_proyect_spa4.services.UsuarioService;
 
 import jakarta.servlet.http.HttpSession;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("api/sesion")
 public class SesionController {
@@ -77,7 +72,5 @@ public class SesionController {
 
         return ResponseEntity.ok(usuario);
     }
-
-    
 }
 
