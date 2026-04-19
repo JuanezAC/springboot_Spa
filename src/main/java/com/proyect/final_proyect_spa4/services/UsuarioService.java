@@ -30,15 +30,15 @@ public class UsuarioService {
         return null;
     }
 
-    public List<Usuario> obtenerTodos(){
+    public List<Usuario> buscarTodosUsuarios(){
         return usuarioRepository.findAll();
     }
 
-    public Usuario obtenerPorId(Long id){
+    public Usuario buscarUsuarioPorId(Long id){
         return usuarioRepository.findById(id).orElse(null);
     }
 
-    public ResponseEntity<?> guardar(Usuario usuario) {
+    public ResponseEntity<?> guardarUsuario(Usuario usuario) {
         if (usuario.getId() != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("mensaje", "No se debe enviar el ID al registrar un nuevo usuario"));
@@ -72,8 +72,8 @@ public class UsuarioService {
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
     }
 
-    public ResponseEntity<?> actualizar(Long id, Usuario usuarioActualizado) {
-        Usuario usuarioExistente = obtenerPorId(id);
+    public ResponseEntity<?> actualizarUsuario(Long id, Usuario usuarioActualizado) {
+        Usuario usuarioExistente = buscarUsuarioPorId(id);
 
         if (usuarioExistente == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -121,8 +121,8 @@ public class UsuarioService {
     }
 
 
-    public ResponseEntity<?> eliminar(Long id) {
-        Usuario usuarioExistente = obtenerPorId(id);
+    public ResponseEntity<?> eliminarUsuario(Long id) {
+        Usuario usuarioExistente = buscarUsuarioPorId(id);
 
         if (usuarioExistente == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

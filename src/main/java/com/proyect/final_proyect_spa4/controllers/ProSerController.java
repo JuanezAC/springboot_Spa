@@ -36,31 +36,31 @@ public class ProSerController {
 
     // Listar todas las relaciones
     @GetMapping
-    public ResponseEntity<List<ProfesionalServicio>> listarTodas() {
-        return proSerService.obtenerTodos();
+    public ResponseEntity<List<ProfesionalServicio>> buscarTodosProSer() {
+        return proSerService.buscarTodosProSer();
     }
 
     // Obtener por ID
     @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
-        return proSerService.obtenerPorId(id);
+    public ResponseEntity<?> buscarProSerPorId(@PathVariable Long id) {
+        return proSerService.buscarProSerPorId(id);
     }
 
     // Obtener servicios de un profesional
     @GetMapping("/profesional/{profesionalId}")
-    public ResponseEntity<List<ProfesionalServicio>> obtenerPorProfesional(@PathVariable Long profesionalId) {
-        return proSerService.obtenerPorProfesional(profesionalId);
+    public ResponseEntity<List<ProfesionalServicio>> buscarProSerPorProfesional(@PathVariable Long profesionalId) {
+        return proSerService.buscarProSerPorProfesional(profesionalId);
     }
 
     // Obtener profesionales de un servicio
     @GetMapping("/servicio/{servicioId}")
-    public ResponseEntity<List<ProfesionalServicio>> obtenerPorServicio(@PathVariable Long servicioId) {
-        return proSerService.obtenerPorServicio(servicioId);
+    public ResponseEntity<List<ProfesionalServicio>> buscarProSerPorServicio(@PathVariable Long servicioId) {
+        return proSerService.buscarProSerPorServicio(servicioId);
     }
 
     // Guardar relación
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody ProfesionalServicio proSer, HttpSession session) {
+    public ResponseEntity<?> guardarProSer(@RequestBody ProfesionalServicio proSer, HttpSession session) {
         if (!sesionService.haySesion(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("error", "Debe iniciar sesión"));
@@ -72,7 +72,7 @@ public class ProSerController {
         }
 
         try {
-            return proSerService.guardar(proSer);
+            return proSerService.guardarProSer(proSer);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of(
@@ -84,7 +84,7 @@ public class ProSerController {
 
     // Actualizar relación
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody ProfesionalServicio proSer, HttpSession session) {
+    public ResponseEntity<?> actualizarProSer(@PathVariable Long id, @RequestBody ProfesionalServicio proSer, HttpSession session) {
         if (!sesionService.haySesion(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("error", "Debe iniciar sesión"));
@@ -96,7 +96,7 @@ public class ProSerController {
         }
 
         try {
-            return proSerService.actualizar(id, proSer);
+            return proSerService.actualizarProSer(id, proSer);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of(
@@ -108,7 +108,7 @@ public class ProSerController {
 
     // Eliminar relación
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<?> eliminarProSer(@PathVariable Long id, HttpSession session) {
         if (!sesionService.haySesion(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("error", "Debe iniciar sesión"));
@@ -120,7 +120,7 @@ public class ProSerController {
         }
 
         try {
-            return proSerService.eliminar(id);
+            return proSerService.eliminarProSer(id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of(

@@ -26,22 +26,22 @@ public class ProfesionalService {
         this.proSerRepository = proSerRepository;
     }
 
-    public List<Profesional> obtenerTodos() {
+    public List<Profesional> buscarTodosProfesionales() {
         return profesionalRepository.findAll();
     }
 
-    public Profesional obtenerPorId(Long id) {
+    public Profesional buscarProfesionalPorId(Long id) {
         return profesionalRepository.findById(id).orElse(null);
     }
 
-    public List<Profesional> obtenerProfesionesPorServicio(Long servicioId) {
+    public List<Profesional> buscarProfesionalesPorServicio(Long servicioId) {
         return proSerRepository.findByServicioId(servicioId)
                 .stream()
                 .map(proSer -> proSer.getProfesional())
                 .collect(Collectors.toList());
     }
 
-    public ResponseEntity<?> guardar(Profesional profesional) {
+    public ResponseEntity<?> guardarProfesional(Profesional profesional) {
         if (profesional.getId() != null) {
             return ResponseEntity.badRequest()
                     .body(Map.of("mensaje", "No se debe enviar el ID al registrar un profesional"));
@@ -74,8 +74,8 @@ public class ProfesionalService {
         return ResponseEntity.status(HttpStatus.CREATED).body(profesionalRepository.save(profesional));
     }
 
-    public ResponseEntity<?> actualizar(Long id, Profesional profesionalActualizado) {
-        Profesional profesionalExistente = obtenerPorId(id);
+    public ResponseEntity<?> actualizarProfesional(Long id, Profesional profesionalActualizado) {
+        Profesional profesionalExistente = buscarProfesionalPorId(id);
 
         if (profesionalExistente == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensaje", "Profesional no encontrado"));
@@ -129,9 +129,9 @@ public class ProfesionalService {
         return ResponseEntity.ok(profesionalRepository.save(profesionalExistente));
     }
 
-    public ResponseEntity<?> eliminar(Long id) {
+    public ResponseEntity<?> eliminarProfesional(Long id) {
         // 1. Buscamos si existe
-        Profesional profesionalExistente = obtenerPorId(id);
+        Profesional profesionalExistente = buscarProfesionalPorId(id);
 
         if (profesionalExistente == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

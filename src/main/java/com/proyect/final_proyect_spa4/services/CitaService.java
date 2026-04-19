@@ -34,19 +34,19 @@ public class CitaService {
         this.servicioRepository = servicioRepository;
     }
 
-    public List<Cita> obtenerTodos() {
+    public List<Cita> buscarTodasCitas() {
         return citaRepository.findAll();
     }
 
-    public List<Cita> obtenerPorUsuario(Long usuarioId) {
+    public List<Cita> buscarCitasPorUsuario(Long usuarioId) {
         return citaRepository.findbyUsuarioId(usuarioId);
     }
 
-    public Cita obtenerPorId(Long id) {
+    public Cita buscarCitaPorId(Long id) {
         return citaRepository.findById(id).orElse(null);
     }
 
-    public ResponseEntity<?> guardar(Cita cita) {
+    public ResponseEntity<?> guardarCita(Cita cita) {
         // 1. Validar que no envíen ID al crear
         if (cita.getId() != null) {
             return ResponseEntity.badRequest().body(Map.of("mensaje", "No se debe enviar el ID al agendar una nueva cita"));
@@ -118,8 +118,8 @@ public class CitaService {
         return ResponseEntity.status(HttpStatus.CREATED).body(citaRepository.save(cita));
     }
 
-    public ResponseEntity<?> actualizar(Long id, Cita citaActualizada) {
-        Cita citaExistente = obtenerPorId(id);
+    public ResponseEntity<?> actualizarCita(Long id, Cita citaActualizada) {
+        Cita citaExistente = buscarCitaPorId(id);
 
         if (citaExistente == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensaje", "Cita no encontrada"));
@@ -158,8 +158,8 @@ public class CitaService {
         return ResponseEntity.ok(citaRepository.save(citaExistente));
     }
 
-    public ResponseEntity<?> eliminar(Long id) {
-        Cita citaExistente = obtenerPorId(id);
+    public ResponseEntity<?> eliminarCita(Long id) {
+        Cita citaExistente = buscarCitaPorId(id);
         
         if (citaExistente == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensaje", "La cita no existe para ser eliminada"));

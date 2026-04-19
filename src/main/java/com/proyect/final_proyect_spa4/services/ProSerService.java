@@ -27,12 +27,12 @@ public class ProSerService {
     }
 
     // Listar todos
-    public ResponseEntity<List<ProfesionalServicio>> obtenerTodos(){
+    public ResponseEntity<List<ProfesionalServicio>> buscarTodosProSer(){
         return ResponseEntity.ok(proSerRepos.findAll());
     }
 
     // Obtener por ID
-    public ResponseEntity<?> obtenerPorId(Long id){
+    public ResponseEntity<?> buscarProSerPorId(Long id){
         ProfesionalServicio proSer = proSerRepos.findById(id).orElse(null);
         
         if(proSer == null){
@@ -44,17 +44,17 @@ public class ProSerService {
     }
 
     // Obtener profesionales de un servicio
-    public ResponseEntity<List<ProfesionalServicio>> obtenerPorServicio(Long servicioId){
+    public ResponseEntity<List<ProfesionalServicio>> buscarProSerPorServicio(Long servicioId){
         return ResponseEntity.ok(proSerRepos.findByServicioId(servicioId));
     }
 
     // Obtener servicios de un profesional
-    public ResponseEntity<List<ProfesionalServicio>> obtenerPorProfesional(Long profesionalId){
+    public ResponseEntity<List<ProfesionalServicio>> buscarProSerPorProfesional(Long profesionalId){
         return ResponseEntity.ok(proSerRepos.findByProfesionalId(profesionalId));
     }
 
     // Guardar relación profesional-servicio
-    public ResponseEntity<?> guardar(ProfesionalServicio proSer){
+    public ResponseEntity<?> guardarProSer(ProfesionalServicio proSer){
         // Validar que exista el profesional
         if(proSer.getProfesional() == null || proSer.getProfesional().getId() == null){
             return ResponseEntity.badRequest()
@@ -97,7 +97,7 @@ public class ProSerService {
     }
 
     // Actualizar relación
-    public ResponseEntity<?> actualizar(Long id, ProfesionalServicio proSerActualizado){
+    public ResponseEntity<?> actualizarProSer(Long id, ProfesionalServicio proSerActualizado){
         ProfesionalServicio proSerExistente = proSerRepos.findById(id).orElse(null);
         
         if(proSerExistente == null){
@@ -129,7 +129,7 @@ public class ProSerService {
     }
 
     // Eliminar relación
-    public ResponseEntity<?> eliminar(Long id){
+    public ResponseEntity<?> eliminarProSer(Long id){
         ProfesionalServicio proSer = proSerRepos.findById(id).orElse(null);
         
         if(proSer == null){

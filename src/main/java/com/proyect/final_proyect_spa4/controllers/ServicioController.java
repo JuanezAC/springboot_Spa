@@ -37,13 +37,13 @@ public class ServicioController {
     }
 
     @GetMapping
-    public ResponseEntity<?> listar() {
-        return ResponseEntity.ok(servicioService.obtenerTodos());
+    public ResponseEntity<?> buscarTodosServicios() {
+        return ResponseEntity.ok(servicioService.buscarTodosServicios());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
-        Servicio servicio = servicioService.obtenerPorId(id);
+    public ResponseEntity<?> buscarServicioPorId(@PathVariable Long id) {
+        Servicio servicio = servicioService.buscarServicioPorId(id);
 
         if (servicio == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -54,7 +54,7 @@ public class ServicioController {
     }
 
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody Servicio servicio, HttpSession session) {
+    public ResponseEntity<?> guardarServicio(@RequestBody Servicio servicio, HttpSession session) {
         if (!sesionService.haySesion(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("mensaje", "Debe iniciar sesión"));
@@ -64,7 +64,7 @@ public class ServicioController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("mensaje", "No tiene permisos para crear servicios"));
         }
         try {
-            return servicioService.guardar(servicio);
+            return servicioService.guardarServicio(servicio);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error al crear servicio", "error", e.getMessage()));
@@ -72,7 +72,7 @@ public class ServicioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> editar(@PathVariable Long id, @RequestBody Servicio servicio, HttpSession session) {
+    public ResponseEntity<?> actualizarServicio(@PathVariable Long id, @RequestBody Servicio servicio, HttpSession session) {
         if (!sesionService.haySesion(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("mensaje", "Debe iniciar sesión"));
@@ -82,7 +82,7 @@ public class ServicioController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("mensaje", "No tiene permisos para editar servicios"));
         }
         try {
-            return servicioService.actualizar(id, servicio);
+            return servicioService.actualizarServicio(id, servicio);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error al actualizar servicio", "error", e.getMessage()));
@@ -90,7 +90,7 @@ public class ServicioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<?> eliminarServicio(@PathVariable Long id, HttpSession session) {
         if (!sesionService.haySesion(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("mensaje", "Debe iniciar sesión"));
@@ -100,7 +100,7 @@ public class ServicioController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("mensaje", "No tiene permisos para eliminar servicios"));
         }
         try {
-            return servicioService.eliminar(id);
+            return servicioService.eliminarServicio(id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error al eliminar servicio"));

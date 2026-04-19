@@ -18,15 +18,15 @@ public class ServicioService {
         this.servicioRepository = servicioRepository;
     }
 
-    public List<Servicio> obtenerTodos() {
+    public List<Servicio> buscarTodosServicios() {
         return servicioRepository.findAll();
     }
 
-    public Servicio obtenerPorId(Long id) {
+    public Servicio buscarServicioPorId(Long id) {
         return servicioRepository.findById(id).orElse(null);
     }
 
-    public ResponseEntity<?> guardar(Servicio servicio) {
+    public ResponseEntity<?> guardarServicio(Servicio servicio) {
         if (servicio.getId() != null) {
             return ResponseEntity.badRequest().body(Map.of("mensaje", "No se debe enviar el ID al registrar un servicio"));
         }
@@ -49,8 +49,8 @@ public class ServicioService {
         return ResponseEntity.status(HttpStatus.CREATED).body(servicioRepository.save(servicio));
     }
 
-    public ResponseEntity<?> actualizar(Long id, Servicio servicioActualizado) {
-        Servicio servicioExistente = obtenerPorId(id);
+    public ResponseEntity<?> actualizarServicio(Long id, Servicio servicioActualizado) {
+        Servicio servicioExistente = buscarServicioPorId(id);
 
         if (servicioExistente == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensaje", "Servicio no encontrado"));
@@ -90,8 +90,8 @@ public class ServicioService {
         return ResponseEntity.ok(servicioRepository.save(servicioExistente));
     }
 
-    public ResponseEntity<?> eliminar(Long id) {
-        Servicio servicioExistente = obtenerPorId(id);
+    public ResponseEntity<?> eliminarServicio(Long id) {
+        Servicio servicioExistente = buscarServicioPorId(id);
         
         if (servicioExistente == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensaje", "Servicio no encontrado"));

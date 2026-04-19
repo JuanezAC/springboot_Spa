@@ -37,14 +37,14 @@ public class ProfesionalController {
     }
 
     @GetMapping
-    public ResponseEntity<?> listar() {
-        return ResponseEntity.ok(profesionalService.obtenerTodos());
+    public ResponseEntity<?> buscarTodosProfesionales() {
+        return ResponseEntity.ok(profesionalService.buscarTodosProfesionales());
     }
 
     // GET /api/profesionales/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
-        Profesional profesional = profesionalService.obtenerPorId(id);
+    public ResponseEntity<?> buscarProfesionalPorId(@PathVariable Long id) {
+        Profesional profesional = profesionalService.buscarProfesionalPorId(id);
         
         if (profesional == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -56,8 +56,8 @@ public class ProfesionalController {
 
     // GET /api/profesionales/servicio/{servicioId}
     @GetMapping("/servicio/{servicioId}")
-    public ResponseEntity<?> obtenerPorServicio(@PathVariable Long servicioId) {
-        List<Profesional> profesionales = profesionalService.obtenerProfesionesPorServicio(servicioId);
+    public ResponseEntity<?> buscarProfesionalesPorServicio(@PathVariable Long servicioId) {
+        List<Profesional> profesionales = profesionalService.buscarProfesionalesPorServicio(servicioId);
         
         if (profesionales.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -68,7 +68,7 @@ public class ProfesionalController {
     }
 
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody Profesional profesional, HttpSession session) {
+    public ResponseEntity<?> guardarProfesional(@RequestBody Profesional profesional, HttpSession session) {
         if (!sesionService.haySesion(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("mensaje", "Debe iniciar sesión"));
@@ -79,7 +79,7 @@ public class ProfesionalController {
         }
 
         try {
-            return profesionalService.guardar(profesional);
+            return profesionalService.guardarProfesional(profesional);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of(
@@ -90,7 +90,7 @@ public class ProfesionalController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> editar(@PathVariable Long id, @RequestBody Profesional profesional, HttpSession session) {
+    public ResponseEntity<?> actualizarProfesional(@PathVariable Long id, @RequestBody Profesional profesional, HttpSession session) {
         if (!sesionService.haySesion(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("mensaje", "Debe iniciar sesión"));
@@ -101,7 +101,7 @@ public class ProfesionalController {
         }
 
         try {
-            return profesionalService.actualizar(id, profesional);
+            return profesionalService.actualizarProfesional(id, profesional);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of(
@@ -113,7 +113,7 @@ public class ProfesionalController {
     
     // DELETE /api/profesionales/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<?> eliminarProfesional(@PathVariable Long id, HttpSession session) {
         if (!sesionService.haySesion(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("mensaje", "Debe iniciar sesión"));
@@ -126,7 +126,7 @@ public class ProfesionalController {
 
         try {
             // El servicio ahora maneja el borrado lógico (activo = false)
-            return profesionalService.eliminar(id);
+            return profesionalService.eliminarProfesional(id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error al intentar eliminar el profesional", "error", e.getMessage()));

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.proyect.final_proyect_spa4.entities.Usuario;
+import com.proyect.final_proyect_spa4.entities.UsuarioSesion;
 import com.proyect.final_proyect_spa4.services.SesionService;
 import com.proyect.final_proyect_spa4.services.UsuarioService;
 
@@ -33,23 +34,33 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public ResponseEntity<?> obtenerTodos(HttpSession session){
+    public ResponseEntity<?> buscarTodosUsuarios(HttpSession session){
         if (!sesionService.haySesion(session)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("mensaje", "Debes iniciar sesion"));
         }
 
-        return ResponseEntity.ok(usuarioService.obtenerTodos());
+        if (!sesionService.esAdmin(session)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("mensaje", "No tienes permisos para ver todos los usuarios"));
+        }
+
+        return ResponseEntity.ok(usuarioService.buscarTodosUsuarios());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerPorId(@PathVariable Long id, HttpSession session){
+    public ResponseEntity<?> buscarUsuarioPorId(@PathVariable Long id, HttpSession session){
         if (!sesionService.haySesion(session)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("mensaje", "Debes iniciar sesión"));
         }
 
-        Usuario usuario = usuarioService.obtenerPorId(id);
+        if (!sesionService.esAdmin(session) && !sesionService.esMismoUsuario(session, id)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("mensaje", "No tienes permisos para ver este usuario"));
+        }
+
+        Usuario usuario = usuarioService.buscarUsuarioPorId(id);
 
         if(usuario == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensaje", "usuario no encontrado"));
@@ -60,7 +71,7 @@ public class UsuarioController {
     @PostMapping("/registro")
     public ResponseEntity<?> registrarCliente(@RequestBody Usuario usuario) {
         try {
-            return usuarioService.guardar(usuario);
+            return usuarioService.guardarUsuario(usuario);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error interno al procesar el registro", "error", e.getMessage()));
@@ -68,7 +79,7 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<?> guardar(@RequestBody Usuario usuario, HttpSession session) {
+    public ResponseEntity<?> guardarUsuario(@RequestBody Usuario usuario, HttpSession session) {
         if (!sesionService.haySesion(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("mensaje", "Debes iniciar sesión"));
@@ -80,7 +91,7 @@ public class UsuarioController {
         }
 
         try {
-            return usuarioService.guardar(usuario);
+            return usuarioService.guardarUsuario(usuario);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of(
@@ -91,18 +102,19 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Usuario usuario, HttpSession session){
+    public ResponseEntity<?> actualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuario, HttpSession session){
         if (!sesionService.haySesion(session)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("mensaje", "Debes iniciar sesión"));
         }
-        if(!sesionService.esAdmin(session)){
+
+        if (!sesionService.esAdmin(session) && !sesionService.esMismoUsuario(session, id)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(Map.of("mensaje", "No tienes permisos para actualizar usuarios"));
+                .body(Map.of("mensaje", "No tienes permisos para actualizar este usuario"));
         }
 
         try {
-            return usuarioService.actualizar(id, usuario);
+            return usuarioService.actualizarUsuario(id, usuario);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error interno al actualizar", "error", e.getMessage()));
@@ -111,7 +123,7 @@ public class UsuarioController {
 
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id, HttpSession session){
+    public ResponseEntity<?> eliminarUsuario(@PathVariable Long id, HttpSession session){
         if (!sesionService.haySesion(session)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("mensaje", "Debes iniciar sesión"));
@@ -122,7 +134,7 @@ public class UsuarioController {
         }
 
         try {
-            return usuarioService.eliminar(id);
+            return usuarioService.eliminarUsuario(id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error interno al eliminar", "error", e.getMessage()));

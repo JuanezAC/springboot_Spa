@@ -35,7 +35,7 @@ public class CitaController {
 
     // GET /api/citas (Solo Admin)
     @GetMapping
-    public ResponseEntity<?> obtenerTodas(HttpSession session) {
+    public ResponseEntity<?> buscarTodasCitas(HttpSession session) {
         if (!sesionService.haySesion(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("mensaje", "Debes iniciar sesión para consultar citas"));
@@ -44,12 +44,12 @@ public class CitaController {
         if (!sesionService.esAdmin(session)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("mensaje", "No tienes permisos de administrador para ver detalles de citas ajenas"));
         }
-        return ResponseEntity.ok(citaService.obtenerTodos());
+        return ResponseEntity.ok(citaService.buscarTodasCitas());
     }
 
     // GET /api/citas/{id} (Solo Admin)
     @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerPorId(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<?> buscarCitaPorId(@PathVariable Long id, HttpSession session) {
         if (!sesionService.haySesion(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("mensaje", "Debes iniciar sesión para consultar citas"));
@@ -60,7 +60,7 @@ public class CitaController {
                 .body(Map.of("mensaje", "No tienes permisos de administrador para ver detalles de citas ajenas"));
         }
 
-        Cita cita = citaService.obtenerPorId(id);
+        Cita cita = citaService.buscarCitaPorId(id);
 
         if (cita == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -73,7 +73,7 @@ public class CitaController {
 
     // GET /api/citas/mis-citas
     @GetMapping("/mis-citas")
-    public ResponseEntity<?> obtenerMisCitas(HttpSession session) {
+    public ResponseEntity<?> buscarMisCitas(HttpSession session) {
         // Obtener el usuario de la sesión
         UsuarioSesion usuario = sesionService.obtenerUsuario(session);
         
@@ -83,17 +83,26 @@ public class CitaController {
                 .body(Map.of("mensaje", "Sesión expirada o no válida. Por favor, inicia sesión nuevamente. Tien que estar con la sesion activa"));
         }
         
-        return ResponseEntity.ok(citaService.obtenerPorUsuario(usuario.getId()));
+        return ResponseEntity.ok(citaService.buscarCitasPorUsuario(usuario.getId()));
     }
 
     @PostMapping
-    public ResponseEntity<?> guardar(@RequestBody Cita cita, HttpSession session) {
+    public ResponseEntity<?> guardarCita(@RequestBody Cita cita, HttpSession session) {
         if (!sesionService.haySesion(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("mensaje", "Debes iniciar sesión para agendar"));
         }
+
+        if (!sesionService.esAdmin(session)) {
+            Long usuarioId = sesionService.obtenerUsuarioId(session);
+            if (cita.getUsuario() == null || cita.getUsuario().getId() == null || !usuarioId.equals(cita.getUsuario().getId())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("mensaje", "No tienes permisos para agendar citas en nombre de otro usuario"));
+            }
+        }
+
         try {
-            return citaService.guardar(cita);
+            return citaService.guardarCita(cita);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error al agendar la cita", "error", e.getMessage()));
@@ -101,12 +110,21 @@ public class CitaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Cita cita, HttpSession session) {
+    public ResponseEntity<?> actualizarCita(@PathVariable Long id, @RequestBody Cita cita, HttpSession session) {
         if (!sesionService.haySesion(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("mensaje", "Sesión inválida"));
         }
+        Cita citaExistente = citaService.buscarCitaPorId(id);
+        if (citaExistente == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensaje", "Cita no encontrada"));
+        }
+
+        if (!sesionService.esAdmin(session) && !sesionService.esMismoUsuario(session, citaExistente.getUsuario().getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("mensaje", "No tienes permisos para actualizar esta cita"));
+        }
         try {
-            return citaService.actualizar(id, cita);
+            return citaService.actualizarCita(id, cita);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error al actualizar la cita", "error", e.getMessage()));
@@ -114,12 +132,23 @@ public class CitaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<?> eliminarCita(@PathVariable Long id, HttpSession session) {
         if (!sesionService.haySesion(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("mensaje", "Sesión inválida"));
         }
+
+        Cita citaExistente = citaService.buscarCitaPorId(id);
+        if (citaExistente == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensaje", "Cita no encontrada"));
+        }
+
+        if (!sesionService.esAdmin(session) && !sesionService.esMismoUsuario(session, citaExistente.getUsuario().getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("mensaje", "No tienes permisos para cancelar esta cita"));
+        }
+
         try {
-            return citaService.eliminar(id);
+            return citaService.eliminarCita(id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error al cancelar la cita", "error", e.getMessage()));

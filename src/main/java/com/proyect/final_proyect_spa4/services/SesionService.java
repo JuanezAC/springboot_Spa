@@ -31,6 +31,16 @@ public class SesionService {
         return usuario.getRol().equalsIgnoreCase("ADMIN");
     }
 
+    public Long obtenerUsuarioId(HttpSession session){
+        UsuarioSesion usuario = obtenerUsuario(session);
+        return usuario == null ? null : usuario.getId();
+    }
+
+    public boolean esMismoUsuario(HttpSession session, Long id){
+        Long usuarioId = obtenerUsuarioId(session);
+        return usuarioId != null && usuarioId.equals(id);
+    }
+
     public void cerrarSesion(HttpSession session){
         session.invalidate();
     }

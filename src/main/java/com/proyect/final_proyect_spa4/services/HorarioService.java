@@ -20,15 +20,15 @@ public class HorarioService {
         this.horarioRepository = horarioRepository;
     }
 
-    public List<HorarioDisponible> obtenerHorario(){
+    public List<HorarioDisponible> buscarTodosHorarios(){
         return horarioRepository.findAll();
     }
 
-    public List<HorarioDisponible> obtenerHorarioPorProfesional(Long profesionalId){
+    public List<HorarioDisponible> buscarHorariosPorProfesional(Long profesionalId){
         return horarioRepository.findByProfesionalId(profesionalId);
     }
 
-    public HorarioDisponible obtenerPorId(Long id){
+    public HorarioDisponible buscarHorarioPorId(Long id){
         return horarioRepository.findById(id).orElse(null);
     }
     
@@ -54,7 +54,7 @@ public class HorarioService {
     }
 
     public ResponseEntity<?> actualizarHorario(Long id, HorarioDisponible horarioActualizado){
-        HorarioDisponible horarioExistente = obtenerPorId(id);
+        HorarioDisponible horarioExistente = buscarHorarioPorId(id);
 
         if(horarioExistente == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Horario no encontrado"));
@@ -85,7 +85,7 @@ public class HorarioService {
     }
 
     public Boolean eliminarHorario(Long id){
-        HorarioDisponible horarioExistente = obtenerPorId(id);
+        HorarioDisponible horarioExistente = buscarHorarioPorId(id);
 
         if(horarioExistente == null){
             return false;
