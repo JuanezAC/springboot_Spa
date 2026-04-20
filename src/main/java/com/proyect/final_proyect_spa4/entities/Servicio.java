@@ -1,7 +1,5 @@
 package com.proyect.final_proyect_spa4.entities;
 
-import java.math.BigDecimal;
-
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import jakarta.persistence.Entity;

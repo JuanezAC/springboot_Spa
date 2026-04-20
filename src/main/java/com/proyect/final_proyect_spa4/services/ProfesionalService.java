@@ -3,15 +3,13 @@ package com.proyect.final_proyect_spa4.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.proyect.final_proyect_spa4.entities.HorarioDisponible;
 import com.proyect.final_proyect_spa4.entities.Profesional;
-import com.proyect.final_proyect_spa4.repositories.HorarioRepository;
+import com.proyect.final_proyect_spa4.entities.ProfesionalServicio;
 import com.proyect.final_proyect_spa4.repositories.ProSerRepository;
 import com.proyect.final_proyect_spa4.repositories.ProfesionalRepository;
 
@@ -35,10 +33,13 @@ public class ProfesionalService {
     }
 
     public List<Profesional> buscarProfesionalesPorServicio(Long servicioId) {
-        return proSerRepository.findByServicioId(servicioId)
-                .stream()
-                .map(proSer -> proSer.getProfesional())
-                .collect(Collectors.toList());
+        List<ProfesionalServicio> proSers = proSerRepository.findByServicioId(servicioId);
+        
+        List<Profesional> profesionales = new ArrayList<>();
+        for (ProfesionalServicio proSer : proSers) {
+            profesionales.add(proSer.getProfesional());
+        }
+        return profesionales;
     }
 
     public ResponseEntity<?> guardarProfesional(Profesional profesional) {

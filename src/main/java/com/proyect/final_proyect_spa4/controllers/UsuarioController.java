@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.proyect.final_proyect_spa4.entities.Usuario;
-import com.proyect.final_proyect_spa4.entities.UsuarioSesion;
 import com.proyect.final_proyect_spa4.services.SesionService;
 import com.proyect.final_proyect_spa4.services.UsuarioService;
 
