@@ -19,17 +19,17 @@ public class HorarioDisponible {
     private Long id;
     private LocalDate fecha;
     private LocalTime hora;
-    private boolean disponible;
+    private Boolean disponible;
 
     @ManyToOne
     @JoinColumn(name = "profesional_id")
-    @JsonBackReference
+    @JsonBackReference(value ="profesional-horario")
     private Profesional profesional;
 
     public HorarioDisponible(){
     }
 
-    public HorarioDisponible(Long id, LocalDate fecha, LocalTime hora, boolean disponible) {
+    public HorarioDisponible(Long id, LocalDate fecha, LocalTime hora, Boolean disponible) {
         this.id = id;
         this.fecha = fecha;
         this.hora = hora;
@@ -60,11 +60,11 @@ public class HorarioDisponible {
         this.hora = hora;
     }
 
-    public boolean getDisponible() {
+    public Boolean getDisponible() {
         return disponible;
     }
 
-    public void setDisponible(boolean disponible) {
+    public void setDisponible(Boolean disponible) {
         this.disponible = disponible;
     }
 

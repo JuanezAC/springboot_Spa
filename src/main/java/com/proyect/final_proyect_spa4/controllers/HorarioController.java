@@ -92,7 +92,7 @@ public class HorarioController {
         }
 
         if (!sesionService.esAdmin(session)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)//
                 .body("No tiene permisos para eliminar horarios");
         }
 

@@ -15,12 +15,12 @@ public class ProfesionalServicio {
 
     @ManyToOne
     @JoinColumn(name = "profesional_id", nullable = false)
-    @JsonBackReference
+    @JsonBackReference(value = "profesional-proservicios")
     private Profesional profesional;
 
     @ManyToOne
     @JoinColumn(name = "servicio_id", nullable = false)
-    @JsonBackReference
+    @JsonBackReference(value = "servicios-proservicios")
     private Servicio servicio;
 
     public ProfesionalServicio() {

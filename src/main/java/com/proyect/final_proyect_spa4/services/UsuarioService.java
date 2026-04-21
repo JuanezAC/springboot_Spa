@@ -24,7 +24,7 @@ public class UsuarioService {
     public Usuario autenticar(String correo, String contrasena){
         Usuario usuario = usuarioRepository.findByCorreo(correo);
 
-        if(usuario != null && passwordEncoder.matches(contrasena, usuario.getContraseña())){
+        if(usuario != null && passwordEncoder.matches(contrasena, usuario.getContrasena())){
             return usuario;
         }
         return null;
@@ -62,11 +62,11 @@ public class UsuarioService {
                 .body(Map.of("mensaje", "El correo ya se encuentra registrado"));
         }
 
-        if (usuario.getContraseña() == null || usuario.getContraseña().isBlank()) {
+        if (usuario.getContrasena() == null || usuario.getContrasena().isBlank()) {
             return ResponseEntity.badRequest().body(Map.of("mensaje", "La contraseña es obligatoria y no puede estar vacía."));
         }
 
-        usuario.setContraseña(passwordEncoder.encode(usuario.getContraseña()));
+        usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
 
         Usuario nuevoUsuario = usuarioRepository.save(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
@@ -113,8 +113,8 @@ public class UsuarioService {
         // Si usuarioActualizado.getRol() es null, no entra al bloque y 'usuarioExistente' conserva su rol original.
 
         // Actualizar contraseña solo si se envía una nueva
-        if (usuarioActualizado.getContraseña() != null && !usuarioActualizado.getContraseña().isBlank()) {
-            usuarioExistente.setContraseña(passwordEncoder.encode(usuarioActualizado.getContraseña()));
+        if (usuarioActualizado.getContrasena() != null && !usuarioActualizado.getContrasena().isBlank()) {
+            usuarioExistente.setContrasena(passwordEncoder.encode(usuarioActualizado.getContrasena()));
         }
 
         return ResponseEntity.ok(usuarioRepository.save(usuarioExistente));

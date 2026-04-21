@@ -96,6 +96,7 @@ public class ServicioService {
         if (servicioExistente == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensaje", "Servicio no encontrado"));
         }
+        // REGLA DE NEGOCIO: No se puede eliminar un servicio que ya ha sido agendado en citas anteriores
 
         try {
             servicioRepository.delete(servicioExistente);

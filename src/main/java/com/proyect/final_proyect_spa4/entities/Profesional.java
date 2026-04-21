@@ -23,24 +23,24 @@ public class Profesional {
     private String especialidad;
     private String telefono;
     private String correo;
-    private boolean estado;
+    private Boolean estado;
 
     @OneToMany(mappedBy = "profesional", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference(value ="profesional-horarios")
     private List<HorarioDisponible> horariosDisponibles;// preguntarle al profesor si esto esta bien
 
     @OneToMany(mappedBy = "profesional", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference(value = "citas-Profesional")
     private List<Cita> citas;
 
     @OneToMany(mappedBy = "profesional", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference(value = "profesional-ProServicios")
     private List<ProfesionalServicio> profesionalServicios;
 
     public Profesional() {
     }
 
-    public Profesional(Long id, String nombre, String especialidad, String telefono, String correo, boolean estado) {
+    public Profesional(Long id, String nombre, String especialidad, String telefono, String correo, Boolean estado) {
         this.id = id;
         this.nombre = nombre;
         this.especialidad = especialidad;
@@ -89,11 +89,11 @@ public class Profesional {
         this.correo = correo;
     }
 
-    public boolean getEstado() {
+    public Boolean getEstado() {
         return estado;
     }
 
-    public void setEstado(boolean estado) {
+    public void setEstado(Boolean estado) {
         this.estado = estado;
     }
 

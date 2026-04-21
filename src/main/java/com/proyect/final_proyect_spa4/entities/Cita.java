@@ -29,17 +29,17 @@ public class Cita {
     private String observacion;
 
     @ManyToOne
-    @JsonBackReference
+    @JsonBackReference(value = "usuario-citas")
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private Usuario usuario;
 
     @ManyToOne
-    @JsonBackReference
+    @JsonBackReference(value = "profesional-citas")
     @JoinColumn(name = "profesional_id", referencedColumnName = "id")
     private Profesional profesional;
 
     @ManyToOne
-    @JsonBackReference
+    @JsonBackReference(value = "servicio-cita")
     @JoinColumn(name = "servicio_id", referencedColumnName = "id")
     private Servicio servicio;
 

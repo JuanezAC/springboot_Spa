@@ -19,22 +19,22 @@ public class Usuario {
     private Long id;
     private String nombre;
     private String correo;
-    private String contraseña;
+    private String contrasena;
     private String rol;
     private LocalDate fechaRegistro = LocalDate.now();
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference(value = "usuario-citas")
     private List<Cita> citas;
 
     public Usuario(){
     }
 
-    public Usuario(Long id, String nombre, String correo, String contraseña, String rol) {
+    public Usuario(Long id, String nombre, String correo, String contrasena, String rol) {
         this.id = id;
         this.nombre = nombre;
         this.correo = correo;
-        this.contraseña = contraseña;
+        this.contrasena = contrasena;
         this.rol = rol;
     }
 
@@ -62,12 +62,12 @@ public class Usuario {
         this.correo = correo;
     }
 
-    public String getContraseña() {
-        return contraseña;
+    public String getContrasena() {
+        return contrasena;
     }
 
-    public void setContraseña(String contraseña) {
-        this.contraseña = contraseña;
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
 
     public String getRol() {
