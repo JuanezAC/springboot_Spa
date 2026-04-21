@@ -9,5 +9,5 @@ import com.proyect.final_proyect_spa4.entities.Cita;
 
 @Repository
 public interface CitaRepository extends JpaRepository<Cita, Long>{
-    List<Cita> findbyUsuarioId(Long usuarioId);
+    List<Cita> findByUsuarioId(Long usuarioId);
 }

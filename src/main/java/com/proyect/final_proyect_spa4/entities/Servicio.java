@@ -1,13 +1,18 @@
 package com.proyect.final_proyect_spa4.entities;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
-@JsonPropertyOrder({"id", "nombre", "descripcion", "duracion", "precio"})
+@JsonPropertyOrder({ "id", "nombre", "descripcion", "duracion", "precio" })
 @Entity
 public class Servicio {
     @Id
@@ -15,10 +20,18 @@ public class Servicio {
     private Long id;
     private String nombre;
     private String descripcion;
-    private Integer duracion; //en minutos
+    private Integer duracion; // en minutos
     private Double precio;
 
-    public Servicio(){
+    @OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Cita> citas;
+
+    @OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<ProfesionalServicio> profesionalServicios;
+
+    public Servicio() {
     }
 
     public Servicio(Long id, String nombre, String descripcion, Integer duracion, Double precio) {
@@ -67,5 +80,21 @@ public class Servicio {
 
     public void setPrecio(Double precio) {
         this.precio = precio;
+    }
+
+    public List<Cita> getCitas() {
+        return citas;
+    }
+
+    public void setCitas(List<Cita> citas) {
+        this.citas = citas;
+    }
+
+    public List<ProfesionalServicio> getProfesionalServicios() {
+        return profesionalServicios;
+    }
+
+    public void setProfesionalServicios(List<ProfesionalServicio> profesionalServicios) {
+        this.profesionalServicios = profesionalServicios;
     }
 }

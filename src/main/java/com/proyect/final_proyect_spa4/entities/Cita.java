@@ -18,7 +18,7 @@ import jakarta.persistence.UniqueConstraint;
 @JsonPropertyOrder({"id", "fecha", "hora", "observacion", "usuario", "profesional", "servicio"})
 @Entity
 @Table(name = "citas", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"usuario_id", "profesional_id", "servicio_id"})
+    @UniqueConstraint(columnNames = {"profesional_id", "fecha", "hora"})
 })
 public class Cita {
     @Id
@@ -39,6 +39,7 @@ public class Cita {
     private Profesional profesional;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "servicio_id", referencedColumnName = "id")
     private Servicio servicio;
 

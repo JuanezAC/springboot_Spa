@@ -12,7 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
-@JsonPropertyOrder({"id", "nombre", "especialidad", "telefono", "email"})
+@JsonPropertyOrder({ "id", "nombre", "especialidad", "telefono", "email" })
 @Entity
 public class Profesional {
     @Id
@@ -27,11 +27,15 @@ public class Profesional {
 
     @OneToMany(mappedBy = "profesional", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<HorarioDisponible> horariosDisponibles;//preguntarle al profesor si esto esta bien
+    private List<HorarioDisponible> horariosDisponibles;// preguntarle al profesor si esto esta bien
 
     @OneToMany(mappedBy = "profesional", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Cita> citas;
+
+    @OneToMany(mappedBy = "profesional", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<ProfesionalServicio> profesionalServicios;
 
     public Profesional() {
     }
@@ -85,27 +89,35 @@ public class Profesional {
         this.correo = correo;
     }
 
-	public boolean getEstado() {
-		return estado;
-	}
+    public boolean getEstado() {
+        return estado;
+    }
 
-	public void setEstado(boolean estado) {
-		this.estado = estado;
-	}
+    public void setEstado(boolean estado) {
+        this.estado = estado;
+    }
 
     public List<HorarioDisponible> getHorariosDisponibles() {
-		return horariosDisponibles;
-	}
+        return horariosDisponibles;
+    }
 
-	public void setHorariosDisponibles(List<HorarioDisponible> horariosDisponibles) {
-		this.horariosDisponibles = horariosDisponibles;
-	}
+    public void setHorariosDisponibles(List<HorarioDisponible> horariosDisponibles) {
+        this.horariosDisponibles = horariosDisponibles;
+    }
 
     public List<Cita> getCitas() {
-		return citas;
-	}
+        return citas;
+    }
 
-	public void setCitas(List<Cita> citas) {
-		this.citas = citas;
-	}
+    public void setCitas(List<Cita> citas) {
+        this.citas = citas;
+    }
+
+    public List<ProfesionalServicio> getProfesionalServicios() {
+        return profesionalServicios;
+    }
+
+    public void setProfesionalServicios(List<ProfesionalServicio> profesionalServicios) {
+        this.profesionalServicios = profesionalServicios;
+    }
 }

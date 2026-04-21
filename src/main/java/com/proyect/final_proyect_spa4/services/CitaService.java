@@ -39,7 +39,7 @@ public class CitaService {
     }
 
     public List<Cita> buscarCitasPorUsuario(Long usuarioId) {
-        return citaRepository.findbyUsuarioId(usuarioId);
+        return citaRepository.findByUsuarioId(usuarioId);
     }
 
     public Cita buscarCitaPorId(Long id) {
