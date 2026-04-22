@@ -34,7 +34,7 @@ public class Cita {
     private Usuario usuario;
 
     @ManyToOne
-    @JsonBackReference(value = "profesional-citas")
+    @JsonBackReference(value = "citas-Profesional")
     @JoinColumn(name = "profesional_id", referencedColumnName = "id")
     private Profesional profesional;
 

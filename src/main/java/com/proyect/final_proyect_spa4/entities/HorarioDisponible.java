@@ -23,7 +23,7 @@ public class HorarioDisponible {
 
     @ManyToOne
     @JoinColumn(name = "profesional_id")
-    @JsonBackReference(value ="profesional-horario")
+    @JsonBackReference(value = "profesional-horarios")
     private Profesional profesional;
 
     public HorarioDisponible(){

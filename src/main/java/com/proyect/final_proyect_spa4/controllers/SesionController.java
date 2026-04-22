@@ -36,7 +36,7 @@ public class SesionController {
 
         if(usuario == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of("mensaje", "Credenciales innvalidas"));
+                .body(Map.of("mensaje", "Credenciales invalidas"));
         }
 
         UsuarioSesion usuarioSesion = new UsuarioSesion();

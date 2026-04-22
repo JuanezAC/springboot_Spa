@@ -24,11 +24,11 @@ public class Servicio {
     private Double precio;
 
     @OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference(value = "servicio-cita")
+    @JsonManagedReference(value="servicio-cita")
     private List<Cita> citas;
 
     @OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference(value = "servicios-proservicios")
+    @JsonManagedReference(value="servicios-proservicios")
     private List<ProfesionalServicio> profesionalServicios;
 
     public Servicio() {

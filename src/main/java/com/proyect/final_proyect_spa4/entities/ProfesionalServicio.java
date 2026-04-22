@@ -2,6 +2,8 @@ package com.proyect.final_proyect_spa4.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+
 import jakarta.persistence.*;
 
 @JsonPropertyOrder({ "id", "profesional", "servicio" })
@@ -15,7 +17,7 @@ public class ProfesionalServicio {
 
     @ManyToOne
     @JoinColumn(name = "profesional_id", nullable = false)
-    @JsonBackReference(value = "profesional-proservicios")
+    @JsonBackReference(value = "profesional-ProServicios")
     private Profesional profesional;
 
     @ManyToOne
