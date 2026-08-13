@@ -8,10 +8,17 @@
 		<version>4.0.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+<<<<<<< HEAD
 	<groupId>com.proyecto</groupId>
 	<artifactId>spa_1</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>spa_1</name>
+=======
+	<groupId>com.proyect</groupId>
+	<artifactId>final_proyect_spa4</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>final_proyect_spa4</name>
+>>>>>>> 2879f8ae949fc301e73a99b916d28022e3dea38c
 	<description/>
 	<url/>
 	<licenses>
@@ -27,7 +34,11 @@
 		<url/>
 	</scm>
 	<properties>
+<<<<<<< HEAD
 		<java.version>25</java.version>
+=======
+		<java.version>17</java.version>
+>>>>>>> 2879f8ae949fc301e73a99b916d28022e3dea38c
 	</properties>
 	<dependencies>
 		<dependency>
@@ -60,8 +71,11 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+<<<<<<< HEAD
 
 		<!-- Source: https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto -->
+=======
+>>>>>>> 2879f8ae949fc301e73a99b916d28022e3dea38c
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-crypto</artifactId>
