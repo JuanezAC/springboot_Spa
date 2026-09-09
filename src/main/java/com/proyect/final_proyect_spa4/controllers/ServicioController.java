@@ -36,7 +36,12 @@ public class ServicioController {
 
     @GetMapping
     public ResponseEntity<?> buscarTodosServicios() {
-        return ResponseEntity.ok(servicioService.buscarTodosServicios());
+        try {
+            return ResponseEntity.ok(servicioService.buscarTodosServicios());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("mensaje", "Error al cargar servicios", "error", e.getMessage()));
+        }
     }
 
     @GetMapping("/{id}")
