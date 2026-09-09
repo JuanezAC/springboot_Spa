@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("api/servicios")
 public class ServicioController {

@@ -20,7 +20,6 @@ import com.proyect.final_proyect_spa4.services.UsuarioService;
 
 import jakarta.servlet.http.HttpSession;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("api/usuarios")
 public class UsuarioController {

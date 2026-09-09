@@ -20,7 +20,6 @@ import com.proyect.final_proyect_spa4.services.SesionService;
 
 import jakarta.servlet.http.HttpSession;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/horarios")
 public class HorarioController {
