@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.proyect.final_proyect_spa4.entities.Servicio;
 import com.proyect.final_proyect_spa4.repositories.ServicioRepository;
@@ -18,6 +19,7 @@ public class ServicioService {
         this.servicioRepository = servicioRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<Servicio> buscarTodosServicios() {
         return servicioRepository.findAll();
     }
