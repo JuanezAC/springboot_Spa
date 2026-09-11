@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.proyect.final_proyect_spa4.entities.HorarioDisponible;
 import com.proyect.final_proyect_spa4.repositories.HorarioRepository;
@@ -20,6 +21,7 @@ public class HorarioService {
         this.horarioRepository = horarioRepository;
     }
 
+    @Transactional
     public List<HorarioDisponible> buscarTodosHorarios(){
         return horarioRepository.findAll();
     }

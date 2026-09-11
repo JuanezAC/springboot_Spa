@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.proyect.final_proyect_spa4.entities.Profesional;
 import com.proyect.final_proyect_spa4.entities.ProfesionalServicio;
@@ -26,7 +27,7 @@ public class ProSerService {
         this.servicioRep = servicioRep;
     }
 
-    // Listar todos
+    @Transactional
     public ResponseEntity<List<ProfesionalServicio>> buscarTodosProSer(){
         return ResponseEntity.ok(proSerRepos.findAll());
     }
