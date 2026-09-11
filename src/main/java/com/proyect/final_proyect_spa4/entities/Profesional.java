@@ -2,9 +2,8 @@ package com.proyect.final_proyect_spa4.entities;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -13,7 +12,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @JsonPropertyOrder({ "id", "nombre", "especialidad", "telefono", "correo", "estado" })
 @Entity
 public class Profesional {
@@ -27,17 +25,19 @@ public class Profesional {
     private String correo;
     private Boolean estado;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "profesional", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HorarioDisponible> horariosDisponibles;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "profesional", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Cita> citas;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "profesional", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProfesionalServicio> profesionalServicios;
 
-    public Profesional() {
-    }
+    public Profesional() {}
 
     public Profesional(Long id, String nombre, String especialidad, String telefono, String correo, Boolean estado) {
         this.id = id;

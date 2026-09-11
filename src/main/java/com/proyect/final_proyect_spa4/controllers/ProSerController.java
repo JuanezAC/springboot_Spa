@@ -35,8 +35,13 @@ public class ProSerController {
 
     // Listar todas las relaciones
     @GetMapping
-    public ResponseEntity<List<ProfesionalServicio>> buscarTodosProSer() {
-        return proSerService.buscarTodosProSer();
+    public ResponseEntity<?> buscarTodosProSer() {
+        try {
+            return proSerService.buscarTodosProSer();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Error al cargar asignaciones", "detalles", e.getMessage()));
+        }
     }
 
     // Obtener por ID

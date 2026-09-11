@@ -1,12 +1,9 @@
 package com.proyect.final_proyect_spa4.entities;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.*;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @JsonPropertyOrder({ "id", "profesional", "servicio" })
 @Entity
 @Table(name = "profesional_servicios", uniqueConstraints = @UniqueConstraint(columnNames = { "profesional_id",
@@ -24,8 +21,7 @@ public class ProfesionalServicio {
     @JoinColumn(name = "servicio_id", nullable = false)
     private Servicio servicio;
 
-    public ProfesionalServicio() {
-    }
+    public ProfesionalServicio() {}
 
     public ProfesionalServicio(Long id, Profesional profesional, Servicio servicio) {
         this.id = id;
