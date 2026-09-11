@@ -1,5 +1,6 @@
 package com.proyect.final_proyect_spa4.entities;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
