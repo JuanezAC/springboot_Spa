@@ -34,7 +34,12 @@ public class HorarioController {
 
     @GetMapping
     public ResponseEntity<?> buscarTodosHorarios() {
-        return ResponseEntity.ok(horarioService.buscarTodosHorarios());
+        try {
+            return ResponseEntity.ok(horarioService.buscarTodosHorarios());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("mensaje", "Error al cargar horarios", "error", e.getMessage()));
+        }
     }
 
     @GetMapping("/profesional/{profesionalId}")

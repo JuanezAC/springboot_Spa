@@ -3,9 +3,6 @@ package com.proyect.final_proyect_spa4.entities;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Entity
 public class HorarioDisponible {
     @Id
@@ -27,8 +23,7 @@ public class HorarioDisponible {
     @JoinColumn(name = "profesional_id")
     private Profesional profesional;
 
-    public HorarioDisponible(){
-    }
+    public HorarioDisponible(){}
 
     public HorarioDisponible(Long id, LocalDate fecha, LocalTime hora, Boolean disponible) {
         this.id = id;

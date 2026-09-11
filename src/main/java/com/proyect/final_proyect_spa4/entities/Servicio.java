@@ -2,8 +2,7 @@ package com.proyect.final_proyect_spa4.entities;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -12,7 +11,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Entity
 public class Servicio {
     @Id
@@ -23,14 +21,15 @@ public class Servicio {
     private Integer duracion;
     private Double precio;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Cita> citas;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProfesionalServicio> profesionalServicios;
 
-    public Servicio() {
-    }
+    public Servicio() {}
 
     public Servicio(Long id, String nombre, String descripcion, Integer duracion, Double precio) {
         this.id = id;

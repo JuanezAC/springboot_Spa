@@ -3,9 +3,7 @@ package com.proyect.final_proyect_spa4.entities;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +14,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @JsonPropertyOrder({"id", "fecha", "hora", "observacion", "usuario", "profesional", "servicio"})
 @Entity
 @Table(name = "citas", uniqueConstraints = {
@@ -42,8 +39,7 @@ public class Cita {
     @JoinColumn(name = "servicio_id", referencedColumnName = "id")
     private Servicio servicio;
 
-    public Cita(){
-    }
+    public Cita(){}
 
     public Cita(Long id, LocalDate fecha, LocalTime hora, String observacion) {
         this.id = id;
