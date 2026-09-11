@@ -1,11 +1,12 @@
 package com.proyect.final_proyect_spa4.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.*;
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @JsonPropertyOrder({ "id", "profesional", "servicio" })
 @Entity
 @Table(name = "profesional_servicios", uniqueConstraints = @UniqueConstraint(columnNames = { "profesional_id",
@@ -17,12 +18,10 @@ public class ProfesionalServicio {
 
     @ManyToOne
     @JoinColumn(name = "profesional_id", nullable = false)
-    @JsonBackReference(value = "profesional-ProServicios")
     private Profesional profesional;
 
     @ManyToOne
     @JoinColumn(name = "servicio_id", nullable = false)
-    @JsonBackReference(value = "servicios-proservicios")
     private Servicio servicio;
 
     public ProfesionalServicio() {
@@ -34,29 +33,10 @@ public class ProfesionalServicio {
         this.servicio = servicio;
     }
 
-    // Getters y Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Profesional getProfesional() {
-        return profesional;
-    }
-
-    public void setProfesional(Profesional profesional) {
-        this.profesional = profesional;
-    }
-
-    public Servicio getServicio() {
-        return servicio;
-    }
-
-    public void setServicio(Servicio servicio) {
-        this.servicio = servicio;
-    }
-
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public Profesional getProfesional() { return profesional; }
+    public void setProfesional(Profesional profesional) { this.profesional = profesional; }
+    public Servicio getServicio() { return servicio; }
+    public void setServicio(Servicio servicio) { this.servicio = servicio; }
 }

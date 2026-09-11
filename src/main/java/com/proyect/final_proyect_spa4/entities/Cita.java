@@ -3,8 +3,9 @@ package com.proyect.final_proyect_spa4.entities;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,6 +16,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @JsonPropertyOrder({"id", "fecha", "hora", "observacion", "usuario", "profesional", "servicio"})
 @Entity
 @Table(name = "citas", uniqueConstraints = {
@@ -29,17 +31,14 @@ public class Cita {
     private String observacion;
 
     @ManyToOne
-    @JsonBackReference(value = "usuario-citas")
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private Usuario usuario;
 
     @ManyToOne
-    @JsonBackReference(value = "citas-Profesional")
     @JoinColumn(name = "profesional_id", referencedColumnName = "id")
     private Profesional profesional;
 
     @ManyToOne
-    @JsonBackReference(value = "servicio-cita")
     @JoinColumn(name = "servicio_id", referencedColumnName = "id")
     private Servicio servicio;
 
@@ -53,59 +52,18 @@ public class Cita {
         this.observacion = observacion;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public LocalDate getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
-    }
-
-    public LocalTime getHora() {
-        return hora;
-    }
-
-    public void setHora(LocalTime hora) {
-        this.hora = hora;
-    }
-
-    public String getObservacion() {
-        return observacion;
-    }
-
-    public void setObservacion(String observacion) {
-        this.observacion = observacion;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public Profesional getProfesional() {
-        return profesional;
-    }
-
-    public void setProfesional(Profesional profesional) {
-        this.profesional = profesional;
-    }
-
-    public Servicio getServicio() {
-        return servicio;
-    }
-
-    public void setServicio(Servicio servicio) {
-        this.servicio = servicio;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public LocalDate getFecha() { return fecha; }
+    public void setFecha(LocalDate fecha) { this.fecha = fecha; }
+    public LocalTime getHora() { return hora; }
+    public void setHora(LocalTime hora) { this.hora = hora; }
+    public String getObservacion() { return observacion; }
+    public void setObservacion(String observacion) { this.observacion = observacion; }
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+    public Profesional getProfesional() { return profesional; }
+    public void setProfesional(Profesional profesional) { this.profesional = profesional; }
+    public Servicio getServicio() { return servicio; }
+    public void setServicio(Servicio servicio) { this.servicio = servicio; }
 }
