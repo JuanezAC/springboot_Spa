@@ -114,6 +114,9 @@ public class UsuarioService {
 
         // Actualizar contraseña solo si se envía una nueva
         if (usuarioActualizado.getContrasena() != null && !usuarioActualizado.getContrasena().isBlank()) {
+            if (passwordEncoder.matches(usuarioActualizado.getContrasena(), usuarioExistente.getContrasena())) {
+                return ResponseEntity.badRequest().body(Map.of("mensaje", "La nueva contraseña no puede ser igual a la anterior"));
+            }
             usuarioExistente.setContrasena(passwordEncoder.encode(usuarioActualizado.getContrasena()));
         }
 
