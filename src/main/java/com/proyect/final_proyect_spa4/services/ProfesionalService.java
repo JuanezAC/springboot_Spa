@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -72,6 +73,10 @@ public class ProfesionalService {
             return ResponseEntity.badRequest().body(Map.of("mensaje", "El número de teléfono es obligatorio"));
         }
 
+        if (!profesional.getTelefono().matches("^[0-9]+$")) {
+            return ResponseEntity.badRequest().body(Map.of("mensaje", "El teléfono solo debe contener números"));
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED).body(profesionalRepository.save(profesional));
     }
 
@@ -121,6 +126,10 @@ public class ProfesionalService {
                 return ResponseEntity.badRequest()
                         .body(Map.of("mensaje", "El teléfono no puede quedar vacío al actualizar"));
             }
+            if (!profesionalActualizado.getTelefono().matches("^[0-9]+$")) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("mensaje", "El teléfono solo debe contener números"));
+            }
             profesionalExistente.setTelefono(profesionalActualizado.getTelefono().trim());
         }
 
@@ -131,26 +140,21 @@ public class ProfesionalService {
     }
 
     public ResponseEntity<?> eliminarProfesional(Long id) {
-        // 1. Buscamos si existe
         Profesional profesionalExistente = buscarProfesionalPorId(id);
 
         if (profesionalExistente == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("mensaje", "Profesional no encontrado para desactivar"));
+                    .body(Map.of("mensaje", "Profesional no encontrado"));
         }
 
-        // 2. Verificamos si ya estaba desactivado (opcional, para ser más precisos)
-        if (!profesionalExistente.getEstado()) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("mensaje", "El profesional ya se encuentra inactivo"));
+        try {
+            profesionalRepository.delete(profesionalExistente);
+            return ResponseEntity.ok(Map.of(
+                    "mensaje",
+                    "Profesional eliminado correctamente junto con sus horarios, citas y asignaciones."));
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("mensaje", "No se puede eliminar el profesional porque tiene registros que dependen de él"));
         }
-
-        // 3. Borrado Lógico: Cambiamos el estado en lugar de usar .delete()
-        profesionalExistente.setEstado(false);
-        profesionalRepository.save(profesionalExistente);
-
-        return ResponseEntity.ok(Map.of(
-                "mensaje",
-                "El profesional ha sido desactivado correctamente. No se podrán agendar nuevas citas con él, pero se conserva su historial."));
     }
 }
