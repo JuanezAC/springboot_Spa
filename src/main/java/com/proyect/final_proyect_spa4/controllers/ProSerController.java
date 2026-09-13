@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.proyect.final_proyect_spa4.entities.ProfesionalServicio;
 import com.proyect.final_proyect_spa4.services.ProSerService;
 import com.proyect.final_proyect_spa4.services.SesionService;
+import com.proyect.final_proyect_spa4.services.SseService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -27,10 +28,12 @@ public class ProSerController {
     
     private final ProSerService proSerService;
     private final SesionService sesionService;
+    private final SseService sseService;
 
-    public ProSerController(ProSerService proSerService, SesionService sesionService) {
+    public ProSerController(ProSerService proSerService, SesionService sesionService, SseService sseService) {
         this.proSerService = proSerService;
         this.sesionService = sesionService;
+        this.sseService = sseService;
     }
 
     // Listar todas las relaciones
@@ -76,7 +79,11 @@ public class ProSerController {
         }
 
         try {
-            return proSerService.guardarProSer(proSer);
+            ResponseEntity<?> respuesta = proSerService.guardarProSer(proSer);
+            if (respuesta.getStatusCode().is2xxSuccessful()) {
+                sseService.enviarEvento("PROFESIONALES_ACTUALIZADOS");
+            }
+            return respuesta;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of(
@@ -100,7 +107,11 @@ public class ProSerController {
         }
 
         try {
-            return proSerService.actualizarProSer(id, proSer);
+            ResponseEntity<?> respuesta = proSerService.actualizarProSer(id, proSer);
+            if (respuesta.getStatusCode().is2xxSuccessful()) {
+                sseService.enviarEvento("PROFESIONALES_ACTUALIZADOS");
+            }
+            return respuesta;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of(
@@ -124,7 +135,11 @@ public class ProSerController {
         }
 
         try {
-            return proSerService.eliminarProSer(id);
+            ResponseEntity<?> respuesta = proSerService.eliminarProSer(id);
+            if (respuesta.getStatusCode().is2xxSuccessful()) {
+                sseService.enviarEvento("PROFESIONALES_ACTUALIZADOS");
+            }
+            return respuesta;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of(

@@ -16,6 +16,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import com.proyect.final_proyect_spa4.services.CitaService;
 import com.proyect.final_proyect_spa4.services.SesionService;
+import com.proyect.final_proyect_spa4.services.SseService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -28,10 +29,12 @@ public class CitaController {
 
     private final CitaService citaService;
     private final SesionService sesionService;
+    private final SseService sseService;
 
-    public CitaController(CitaService citaService, SesionService sesionService) {
+    public CitaController(CitaService citaService, SesionService sesionService, SseService sseService) {
         this.citaService = citaService;
         this.sesionService = sesionService;
+        this.sseService = sseService;
     }
 
     // GET /api/citas (Solo Admin)
@@ -103,7 +106,12 @@ public class CitaController {
         }
 
         try {
-            return citaService.guardarCita(cita);
+            ResponseEntity<?> respuesta = citaService.guardarCita(cita);
+            if (respuesta.getStatusCode().is2xxSuccessful()) {
+                sseService.enviarEvento("CITAS_ACTUALIZADAS");
+                sseService.enviarEvento("HORARIOS_ACTUALIZADOS");
+            }
+            return respuesta;
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Map.of("mensaje", "Este horario ya fue reservado por otro usuario. Por favor selecciona otro horario."));
@@ -128,7 +136,12 @@ public class CitaController {
                 .body(Map.of("mensaje", "No tienes permisos para actualizar esta cita"));
         }
         try {
-            return citaService.actualizarCita(id, cita);
+            ResponseEntity<?> respuesta = citaService.actualizarCita(id, cita);
+            if (respuesta.getStatusCode().is2xxSuccessful()) {
+                sseService.enviarEvento("CITAS_ACTUALIZADAS");
+                sseService.enviarEvento("HORARIOS_ACTUALIZADOS");
+            }
+            return respuesta;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error al actualizar la cita", "error", e.getMessage()));
@@ -152,7 +165,12 @@ public class CitaController {
         }
 
         try {
-            return citaService.eliminarCita(id);
+            ResponseEntity<?> respuesta = citaService.eliminarCita(id);
+            if (respuesta.getStatusCode().is2xxSuccessful()) {
+                sseService.enviarEvento("CITAS_ACTUALIZADAS");
+                sseService.enviarEvento("HORARIOS_ACTUALIZADOS");
+            }
+            return respuesta;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error al cancelar la cita", "error", e.getMessage()));

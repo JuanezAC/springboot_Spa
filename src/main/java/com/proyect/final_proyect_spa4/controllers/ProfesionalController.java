@@ -2,6 +2,7 @@ package com.proyect.final_proyect_spa4.controllers;
 
 import com.proyect.final_proyect_spa4.services.ProfesionalService;
 import com.proyect.final_proyect_spa4.services.SesionService;
+import com.proyect.final_proyect_spa4.services.SseService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -28,10 +29,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProfesionalController {
     private final ProfesionalService profesionalService;
     private final SesionService sesionService;
+    private final SseService sseService;
 
-    public ProfesionalController(ProfesionalService profesionalService, SesionService sesionService) {
+    public ProfesionalController(ProfesionalService profesionalService, SesionService sesionService, SseService sseService) {
         this.profesionalService = profesionalService;
         this.sesionService = sesionService;
+        this.sseService = sseService;
     }
 
     @GetMapping
@@ -77,7 +80,11 @@ public class ProfesionalController {
         }
 
         try {
-            return profesionalService.guardarProfesional(profesional);
+            ResponseEntity<?> respuesta = profesionalService.guardarProfesional(profesional);
+            if (respuesta.getStatusCode().is2xxSuccessful()) {
+                sseService.enviarEvento("PROFESIONALES_ACTUALIZADOS");
+            }
+            return respuesta;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of(
@@ -99,7 +106,11 @@ public class ProfesionalController {
         }
 
         try {
-            return profesionalService.actualizarProfesional(id, profesional);
+            ResponseEntity<?> respuesta = profesionalService.actualizarProfesional(id, profesional);
+            if (respuesta.getStatusCode().is2xxSuccessful()) {
+                sseService.enviarEvento("PROFESIONALES_ACTUALIZADOS");
+            }
+            return respuesta;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of(
@@ -123,8 +134,11 @@ public class ProfesionalController {
         }
 
         try {
-            // El servicio ahora maneja el borrado lógico (activo = false)
-            return profesionalService.eliminarProfesional(id);
+            ResponseEntity<?> respuesta = profesionalService.eliminarProfesional(id);
+            if (respuesta.getStatusCode().is2xxSuccessful()) {
+                sseService.enviarEvento("PROFESIONALES_ACTUALIZADOS");
+            }
+            return respuesta;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error al intentar eliminar el profesional", "error", e.getMessage()));

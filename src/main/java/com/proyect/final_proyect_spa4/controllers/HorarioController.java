@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.proyect.final_proyect_spa4.entities.HorarioDisponible;
 import com.proyect.final_proyect_spa4.services.HorarioService;
 import com.proyect.final_proyect_spa4.services.SesionService;
+import com.proyect.final_proyect_spa4.services.SseService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -26,10 +27,12 @@ public class HorarioController {
 
     private final HorarioService horarioService;
     private final SesionService sesionService;
+    private final SseService sseService;
 
-    public HorarioController(HorarioService horarioService, SesionService sesionService) {
+    public HorarioController(HorarioService horarioService, SesionService sesionService, SseService sseService) {
         this.horarioService = horarioService;
         this.sesionService = sesionService;
+        this.sseService = sseService;
     }
 
     @GetMapping
@@ -80,7 +83,11 @@ public class HorarioController {
                 .body(Map.of("mensaje", "No tiene permisos para crear horarios"));
         }
 
-        return horarioService.guardarHorario(horario);
+        ResponseEntity<?> respuesta = horarioService.guardarHorario(horario);
+        if (respuesta.getStatusCode().is2xxSuccessful()) {
+            sseService.enviarEvento("HORARIOS_ACTUALIZADOS");
+        }
+        return respuesta;
     }
 
     @PutMapping("/{id}")
@@ -95,7 +102,11 @@ public class HorarioController {
                 .body(Map.of("mensaje", "No tiene permisos para actualizar horarios"));
         }
 
-        return horarioService.actualizarHorario(id, horario);
+        ResponseEntity<?> respuesta = horarioService.actualizarHorario(id, horario);
+        if (respuesta.getStatusCode().is2xxSuccessful()) {
+            sseService.enviarEvento("HORARIOS_ACTUALIZADOS");
+        }
+        return respuesta;
     }
 
     @DeleteMapping("/{id}")
@@ -116,6 +127,7 @@ public class HorarioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Horario no encontrado");
         }
 
+        sseService.enviarEvento("HORARIOS_ACTUALIZADOS");
         return ResponseEntity.ok("Horario eliminado con exito");
     }
 }
