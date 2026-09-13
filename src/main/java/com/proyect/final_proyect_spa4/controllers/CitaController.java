@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import com.proyect.final_proyect_spa4.services.CitaService;
 import com.proyect.final_proyect_spa4.services.SesionService;
@@ -103,6 +104,9 @@ public class CitaController {
 
         try {
             return citaService.guardarCita(cita);
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("mensaje", "Este horario ya fue reservado por otro usuario. Por favor selecciona otro horario."));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error al agendar la cita", "error", e.getMessage()));

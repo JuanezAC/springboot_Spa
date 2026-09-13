@@ -111,6 +111,12 @@ public class CitaService {
             }
         }
 
+        // 5. Validar que no exista ya una cita para este profesional en esta fecha y hora
+        if (citaRepository.existsByProfesionalIdAndFechaAndHora(profesionalId, cita.getFecha(), cita.getHora())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("mensaje", "Este horario ya fue reservado. Por favor selecciona otro horario."));
+        }
+
         cita.setUsuario(usuario);
         cita.setProfesional(profesional);
         cita.setServicio(servicio);

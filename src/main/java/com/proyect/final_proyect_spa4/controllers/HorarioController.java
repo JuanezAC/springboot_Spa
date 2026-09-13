@@ -42,6 +42,16 @@ public class HorarioController {
         }
     }
 
+    @GetMapping("/disponibles")
+    public ResponseEntity<?> buscarHorariosDisponibles() {
+        try {
+            return ResponseEntity.ok(horarioService.buscarHorariosDisponibles());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("mensaje", "Error al cargar horarios disponibles", "error", e.getMessage()));
+        }
+    }
+
     @GetMapping("/profesional/{profesionalId}")
     public ResponseEntity<?> buscarHorariosPorProfesional(@PathVariable Long profesionalId) {
         return ResponseEntity.ok(horarioService.buscarHorariosPorProfesional(profesionalId));
