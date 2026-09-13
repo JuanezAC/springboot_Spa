@@ -26,6 +26,11 @@ public class HorarioService {
         return horarioRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
+    public List<HorarioDisponible> buscarHorariosDisponibles(){
+        return horarioRepository.findDisponibles();
+    }
+
     public List<HorarioDisponible> buscarHorariosPorProfesional(Long profesionalId){
         return horarioRepository.findByProfesionalId(profesionalId);
     }
