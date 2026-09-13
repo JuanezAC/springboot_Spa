@@ -102,9 +102,27 @@ public class HorarioController {
                 .body(Map.of("mensaje", "No tiene permisos para actualizar horarios"));
         }
 
+        HorarioDisponible horarioAntes = horarioService.buscarHorarioPorId(id);
+
         ResponseEntity<?> respuesta = horarioService.actualizarHorario(id, horario);
         if (respuesta.getStatusCode().is2xxSuccessful()) {
             sseService.enviarEvento("HORARIOS_ACTUALIZADOS");
+
+            if (horarioAntes != null) {
+                boolean profesionalCambiado = horarioAntes.getProfesional() != null
+                        && horario.getProfesional() != null
+                        && !horarioAntes.getProfesional().getId().equals(horario.getProfesional().getId());
+                boolean fechaCambiada = horario.getFecha() != null
+                        && !horarioAntes.getFecha().equals(horario.getFecha());
+                boolean horaCambiada = horario.getHora() != null
+                        && !horarioAntes.getHora().equals(horario.getHora());
+                boolean disponibilidadCambiada = horarioAntes.getDisponible()
+                        && Boolean.FALSE.equals(horario.getDisponible());
+
+                if (profesionalCambiado || fechaCambiada || horaCambiada || disponibilidadCambiada) {
+                    sseService.enviarEvento("CITAS_ACTUALIZADAS");
+                }
+            }
         }
         return respuesta;
     }
