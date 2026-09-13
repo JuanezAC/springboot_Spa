@@ -57,17 +57,17 @@ public class HorarioService {
     public ResponseEntity<?> guardarHorario(HorarioDisponible horario) {
         if (horario.getProfesional() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", "El horario debe pertenecer a un profesional"));
+                .body(Map.of("mensaje", "El horario debe pertenecer a un profesional"));
         }
 
         if (horario.getFecha().isBefore(LocalDate.now())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", "No se pueden registrar horarios en fechas pasadas"));
+                .body(Map.of("mensaje", "No se pueden registrar horarios en fechas pasadas"));
         }
 
         if (!horario.getDisponible()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", "No se puede registrar un horario que no esta disponible"));
+                .body(Map.of("mensaje", "No se puede registrar un horario que no esta disponible"));
         }
 
         HorarioDisponible nuevoHorario = horarioRepository.save(horario);
@@ -80,33 +80,33 @@ public class HorarioService {
 
         if (horarioExistente == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", "Horario no encontrado"));
+                .body(Map.of("mensaje", "Horario no encontrado"));
         }
 
         if (horarioActualizado.getProfesional() == null || horarioActualizado.getProfesional().getId() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", "El horario debe pertenecer a un profesional"));
+                .body(Map.of("mensaje", "El horario debe pertenecer a un profesional"));
         }
 
         if (horarioActualizado.getFecha() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", "La fecha es obligatoria"));
+                .body(Map.of("mensaje", "La fecha es obligatoria"));
         }
 
         if (horarioActualizado.getHora() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", "La hora es obligatoria"));
+                .body(Map.of("mensaje", "La hora es obligatoria"));
         }
 
         if (horarioActualizado.getDisponible() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", "El campo disponible es obligatorio"));
+                .body(Map.of("mensaje", "El campo disponible es obligatorio"));
         }
 
         Profesional nuevoProfesional = profesionalRepository.findById(horarioActualizado.getProfesional().getId()).orElse(null);
         if (nuevoProfesional == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", "El profesional especificado no existe"));
+                .body(Map.of("mensaje", "El profesional seleccionado no existe"));
         }
 
         Optional<Cita> citaExistenteOpt = citaRepository.findByProfesionalIdAndFechaAndHora(
@@ -162,9 +162,9 @@ public class HorarioService {
 
             if (!nuevoProfesionalTieneServicio) {
                 Servicio servicio = citaExistente.getServicio();
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error",
-                        "El profesional seleccionado no tiene asignado el servicio '"
-                                + servicio.getNombre() + "' de la cita existente"));
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("mensaje",
+                        "No se puede cambiar el profesional porque el profesional seleccionado no tiene asignado el servicio '"
+                                + servicio.getNombre() + "' de esta cita"));
             }
         }
 
@@ -172,7 +172,7 @@ public class HorarioService {
         if (moviendoCita) {
             if (horarioActualizado.getFecha().isBefore(LocalDate.now())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("error", "No se pueden registrar horarios en fechas pasadas"));
+                        .body(Map.of("mensaje", "No se pueden registrar horarios en fechas pasadas"));
             }
 
             Long nuevoProfesionalId = nuevoProfesional.getId();
@@ -182,9 +182,8 @@ public class HorarioService {
                     horarioActualizado.getHora());
 
             if (ocupado) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error",
-                        "El nuevo horario seleccionado ya está ocupado por otra cita. "
-                                + "Por favor elige otra fecha, hora o profesional."));
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("mensaje",
+                        "No se puede actualizar el horario porque el profesional ya tiene una cita en la fecha y hora seleccionadas."));
             }
         }
 
