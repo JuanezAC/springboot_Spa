@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.proyect.final_proyect_spa4.entities.Servicio;
 import com.proyect.final_proyect_spa4.services.ServicioService;
 import com.proyect.final_proyect_spa4.services.SesionService;
+import com.proyect.final_proyect_spa4.services.SseService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -28,10 +29,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ServicioController {
     private final ServicioService servicioService;
     private final SesionService sesionService;
+    private final SseService sseService;
 
-    public ServicioController(ServicioService servicioService, SesionService sesionService) {
+    public ServicioController(ServicioService servicioService, SesionService sesionService, SseService sseService) {
         this.servicioService = servicioService;
         this.sesionService = sesionService;
+        this.sseService = sseService;
     }
 
     @GetMapping
@@ -67,7 +70,11 @@ public class ServicioController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("mensaje", "No tiene permisos para crear servicios"));
         }
         try {
-            return servicioService.guardarServicio(servicio);
+            ResponseEntity<?> respuesta = servicioService.guardarServicio(servicio);
+            if (respuesta.getStatusCode().is2xxSuccessful()) {
+                sseService.enviarEvento("SERVICIOS_ACTUALIZADOS");
+            }
+            return respuesta;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error al crear servicio", "error", e.getMessage()));
@@ -85,7 +92,11 @@ public class ServicioController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("mensaje", "No tiene permisos para editar servicios"));
         }
         try {
-            return servicioService.actualizarServicio(id, servicio);
+            ResponseEntity<?> respuesta = servicioService.actualizarServicio(id, servicio);
+            if (respuesta.getStatusCode().is2xxSuccessful()) {
+                sseService.enviarEvento("SERVICIOS_ACTUALIZADOS");
+            }
+            return respuesta;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error al actualizar servicio", "error", e.getMessage()));
@@ -103,7 +114,11 @@ public class ServicioController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("mensaje", "No tiene permisos para eliminar servicios"));
         }
         try {
-            return servicioService.eliminarServicio(id);
+            ResponseEntity<?> respuesta = servicioService.eliminarServicio(id);
+            if (respuesta.getStatusCode().is2xxSuccessful()) {
+                sseService.enviarEvento("SERVICIOS_ACTUALIZADOS");
+            }
+            return respuesta;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error al eliminar servicio"));

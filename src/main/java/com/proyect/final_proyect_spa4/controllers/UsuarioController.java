@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.proyect.final_proyect_spa4.entities.Usuario;
 import com.proyect.final_proyect_spa4.services.SesionService;
+import com.proyect.final_proyect_spa4.services.SseService;
 import com.proyect.final_proyect_spa4.services.UsuarioService;
 
 import jakarta.servlet.http.HttpSession;
@@ -25,10 +26,12 @@ import jakarta.servlet.http.HttpSession;
 public class UsuarioController {
     public final UsuarioService usuarioService;
     public final SesionService sesionService;
+    private final SseService sseService;
 
-    public UsuarioController(UsuarioService usuarioService, SesionService sesionService) {
+    public UsuarioController(UsuarioService usuarioService, SesionService sesionService, SseService sseService) {
         this.usuarioService = usuarioService;
         this.sesionService = sesionService;
+        this.sseService = sseService;
     }
 
     @GetMapping
@@ -69,7 +72,11 @@ public class UsuarioController {
     @PostMapping("/registro")
     public ResponseEntity<?> registrarCliente(@RequestBody Usuario usuario) {
         try {
-            return usuarioService.guardarUsuario(usuario);
+            ResponseEntity<?> respuesta = usuarioService.guardarUsuario(usuario);
+            if (respuesta.getStatusCode().is2xxSuccessful()) {
+                sseService.enviarEvento("USUARIOS_ACTUALIZADOS");
+            }
+            return respuesta;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error interno al procesar el registro", "error", e.getMessage()));
@@ -89,7 +96,11 @@ public class UsuarioController {
         }
 
         try {
-            return usuarioService.guardarUsuario(usuario);
+            ResponseEntity<?> respuesta = usuarioService.guardarUsuario(usuario);
+            if (respuesta.getStatusCode().is2xxSuccessful()) {
+                sseService.enviarEvento("USUARIOS_ACTUALIZADOS");
+            }
+            return respuesta;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of(
@@ -112,7 +123,11 @@ public class UsuarioController {
         }
 
         try {
-            return usuarioService.actualizarUsuario(id, usuario);
+            ResponseEntity<?> respuesta = usuarioService.actualizarUsuario(id, usuario);
+            if (respuesta.getStatusCode().is2xxSuccessful()) {
+                sseService.enviarEvento("USUARIOS_ACTUALIZADOS");
+            }
+            return respuesta;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error interno al actualizar", "error", e.getMessage()));
@@ -132,7 +147,11 @@ public class UsuarioController {
         }
 
         try {
-            return usuarioService.eliminarUsuario(id);
+            ResponseEntity<?> respuesta = usuarioService.eliminarUsuario(id);
+            if (respuesta.getStatusCode().is2xxSuccessful()) {
+                sseService.enviarEvento("USUARIOS_ACTUALIZADOS");
+            }
+            return respuesta;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("mensaje", "Error interno al eliminar", "error", e.getMessage()));
