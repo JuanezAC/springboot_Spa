@@ -40,13 +40,14 @@ public class Profesional {
 
     public Profesional() {}
 
-    public Profesional(Long id, String nombre, String especialidad, String telefono, String correo, Boolean estado) {
+    public Profesional(Long id, String nombre, String especialidad, String telefono, String correo, Boolean estado, String imagenUrl) {
         this.id = id;
         this.nombre = nombre;
         this.especialidad = especialidad;
         this.telefono = telefono;
         this.correo = correo;
         this.estado = estado;
+        this.imagenUrl = imagenUrl;
     }
 
     public Long getId() { return id; }

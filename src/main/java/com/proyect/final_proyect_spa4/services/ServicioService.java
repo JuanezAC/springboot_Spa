@@ -87,6 +87,8 @@ public class ServicioService {
             servicioExistente.setDescripcion(servicioActualizado.getDescripcion().trim());
         }
 
+        servicioExistente.setImagenUrl(servicioActualizado.getImagenUrl());
+
         return ResponseEntity.ok(servicioRepository.save(servicioExistente));
     }
 
