@@ -20,6 +20,7 @@ public class Servicio {
     private String descripcion;
     private Integer duracion;
     private Double precio;
+    private String imagenUrl;
 
     @JsonIgnore
     @OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -31,12 +32,13 @@ public class Servicio {
 
     public Servicio() {}
 
-    public Servicio(Long id, String nombre, String descripcion, Integer duracion, Double precio) {
+    public Servicio(Long id, String nombre, String descripcion, Integer duracion, Double precio, String imagenUrl) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.duracion = duracion;
         this.precio = precio;
+        this.imagenUrl = imagenUrl;
     }
 
     public Long getId() { return id; }
@@ -49,6 +51,8 @@ public class Servicio {
     public void setDuracion(Integer duracion) { this.duracion = duracion; }
     public Double getPrecio() { return precio; }
     public void setPrecio(Double precio) { this.precio = precio; }
+    public String getImagenUrl() { return imagenUrl; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
     public List<Cita> getCitas() { return citas; }
     public void setCitas(List<Cita> citas) { this.citas = citas; }
     public List<ProfesionalServicio> getProfesionalServicios() { return profesionalServicios; }
