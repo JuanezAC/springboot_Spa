@@ -12,7 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
-@JsonPropertyOrder({ "id", "nombre", "especialidad", "telefono", "correo", "estado" })
+@JsonPropertyOrder({ "id", "nombre", "especialidad", "telefono", "correo", "estado", "imagenUrl" })
 @Entity
 public class Profesional {
     @Id
@@ -24,6 +24,7 @@ public class Profesional {
     private String telefono;
     private String correo;
     private Boolean estado;
+    private String imagenUrl;
 
     @JsonIgnore
     @OneToMany(mappedBy = "profesional", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -60,6 +61,8 @@ public class Profesional {
     public void setCorreo(String correo) { this.correo = correo; }
     public Boolean getEstado() { return estado; }
     public void setEstado(Boolean estado) { this.estado = estado; }
+    public String getImagenUrl() { return imagenUrl; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
     public List<HorarioDisponible> getHorariosDisponibles() { return horariosDisponibles; }
     public void setHorariosDisponibles(List<HorarioDisponible> horariosDisponibles) { this.horariosDisponibles = horariosDisponibles; }
     public List<Cita> getCitas() { return citas; }
