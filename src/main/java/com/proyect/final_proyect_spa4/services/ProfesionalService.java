@@ -136,6 +136,8 @@ public class ProfesionalService {
         // Validación de Estado (Activo/Inactivo)
         profesionalExistente.setEstado(profesionalActualizado.getEstado());
 
+        profesionalExistente.setImagenUrl(profesionalActualizado.getImagenUrl());
+
         return ResponseEntity.ok(profesionalRepository.save(profesionalExistente));
     }
 
