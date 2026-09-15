@@ -8,14 +8,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.proyect.final_proyect_spa4.entities.Servicio;
+import com.proyect.final_proyect_spa4.entities.ProfesionalServicio;
 import com.proyect.final_proyect_spa4.repositories.ServicioRepository;
+import com.proyect.final_proyect_spa4.repositories.ProSerRepository;
 
 @Service
 public class ServicioService {
     private final ServicioRepository servicioRepository;
+    private final ProSerRepository proSerRepository;
 
-    public ServicioService(ServicioRepository servicioRepository) {
+    public ServicioService(ServicioRepository servicioRepository, ProSerRepository proSerRepository) {
         this.servicioRepository = servicioRepository;
+        this.proSerRepository = proSerRepository;
     }
 
     public List<Servicio> buscarTodosServicios() {
@@ -98,14 +102,22 @@ public class ServicioService {
         if (servicioExistente == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensaje", "Servicio no encontrado"));
         }
-        // REGLA DE NEGOCIO: No se puede eliminar un servicio que ya ha sido agendado en citas anteriores
+
+        List<ProfesionalServicio> profesionalesConServicio = proSerRepository.findByServicioId(id);
+        if (!profesionalesConServicio.isEmpty()) {
+            int cantidad = profesionalesConServicio.size();
+            String mensaje = "No se puede eliminar el servicio porque " + cantidad
+                + (cantidad == 1 ? " profesional lo tiene" : " profesionales lo tienen asignado")
+                + ". Primero debes desasignar el servicio de los profesionales.";
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("mensaje", mensaje));
+        }
 
         try {
             servicioRepository.delete(servicioExistente);
             return ResponseEntity.ok(Map.of("mensaje", "Servicio eliminado correctamente"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(Map.of("mensaje", "No se puede eliminar el servicio porque ya ha sido agendado en citas anteriores."));
+                .body(Map.of("mensaje", "No se puede eliminar el servicio porque tiene registros dependientes."));
         }
     }
 }

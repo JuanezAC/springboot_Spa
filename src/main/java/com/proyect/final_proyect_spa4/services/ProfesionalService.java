@@ -13,16 +13,23 @@ import com.proyect.final_proyect_spa4.entities.Profesional;
 import com.proyect.final_proyect_spa4.entities.ProfesionalServicio;
 import com.proyect.final_proyect_spa4.repositories.ProSerRepository;
 import com.proyect.final_proyect_spa4.repositories.ProfesionalRepository;
+import com.proyect.final_proyect_spa4.repositories.CitaRepository;
+import com.proyect.final_proyect_spa4.repositories.HorarioRepository;
 
 @Service
 public class ProfesionalService {
 
     private final ProfesionalRepository profesionalRepository;
     private final ProSerRepository proSerRepository;
+    private final CitaRepository citaRepository;
+    private final HorarioRepository horarioRepository;
 
-    public ProfesionalService(ProfesionalRepository profesionalRepository, ProSerRepository proSerRepository) {
+    public ProfesionalService(ProfesionalRepository profesionalRepository, ProSerRepository proSerRepository,
+            CitaRepository citaRepository, HorarioRepository horarioRepository) {
         this.profesionalRepository = profesionalRepository;
         this.proSerRepository = proSerRepository;
+        this.citaRepository = citaRepository;
+        this.horarioRepository = horarioRepository;
     }
 
     public List<Profesional> buscarTodosProfesionales() {
@@ -158,5 +165,21 @@ public class ProfesionalService {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("mensaje", "No se puede eliminar el profesional porque tiene registros que dependen de él"));
         }
+    }
+
+    public Map<String, Object> obtenerInfoEliminacion(Long id) {
+        Profesional profesional = buscarProfesionalPorId(id);
+        if (profesional == null) {
+            return null;
+        }
+        int horarios = horarioRepository.findByProfesionalId(id).size();
+        int citas = citaRepository.findByProfesionalId(id).size();
+        int servicios = proSerRepository.findByProfesionalId(id).size();
+        return Map.of(
+            "nombre", profesional.getNombre(),
+            "horarios", horarios,
+            "citas", citas,
+            "servicios", servicios
+        );
     }
 }

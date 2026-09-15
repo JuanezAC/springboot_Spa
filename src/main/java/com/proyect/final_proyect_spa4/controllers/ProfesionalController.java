@@ -120,6 +120,25 @@ public class ProfesionalController {
         }
     }
     
+    // GET /api/profesionales/{id}/info-eliminacion
+    @GetMapping("/{id}/info-eliminacion")
+    public ResponseEntity<?> obtenerInfoEliminacion(@PathVariable Long id, HttpSession session) {
+        if (!sesionService.haySesion(session)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("mensaje", "Debe iniciar sesión"));
+        }
+        if (!sesionService.esAdmin(session)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("mensaje", "No tiene permisos"));
+        }
+        Map<String, Object> info = profesionalService.obtenerInfoEliminacion(id);
+        if (info == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("mensaje", "Profesional no encontrado"));
+        }
+        return ResponseEntity.ok(info);
+    }
+
     // DELETE /api/profesionales/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarProfesional(@PathVariable Long id, HttpSession session) {
