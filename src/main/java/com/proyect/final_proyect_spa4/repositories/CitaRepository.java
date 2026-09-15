@@ -15,4 +15,5 @@ public interface CitaRepository extends JpaRepository<Cita, Long>{
     List<Cita> findByUsuarioId(Long usuarioId);
     boolean existsByProfesionalIdAndFechaAndHora(Long profesionalId, LocalDate fecha, LocalTime hora);
     Optional<Cita> findByProfesionalIdAndFechaAndHora(Long profesionalId, LocalDate fecha, LocalTime hora);
+    List<Cita> findByProfesionalId(Long profesionalId);
 }
