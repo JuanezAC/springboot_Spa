@@ -203,6 +203,7 @@ public class HorarioService {
         return ResponseEntity.ok(horarioExistente);
     }
 
+    @Transactional
     public Boolean eliminarHorario(Long id) {
         HorarioDisponible horarioExistente = buscarHorarioPorId(id);
 
