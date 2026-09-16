@@ -23,7 +23,7 @@ public class HorarioExpirationService {
         this.horarioRepository = horarioRepository;
     }
 
-    @Scheduled(cron = "0 */30 * * * *")
+    @Scheduled(cron = "0 */5 * * * *")
     @Transactional
     public void expirarHorariosPasados() {
         LocalDate hoy = LocalDate.now();
