@@ -128,24 +128,25 @@ public class HorarioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminarHorario(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<?> eliminarHorario(@PathVariable Long id, HttpSession session) {
         if (!sesionService.haySesion(session)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body("Debe iniciar sesión");
+                .body(Map.of("mensaje", "Debe iniciar sesión"));
         }
 
         if (!sesionService.esAdmin(session)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)//
-                .body("No tiene permisos para eliminar horarios");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("mensaje", "No tiene permisos para eliminar horarios"));
         }
 
         Boolean eliminar = horarioService.eliminarHorario(id);
 
         if (!eliminar) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Horario no encontrado");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("mensaje", "Horario no encontrado"));
         }
 
         sseService.enviarEvento("HORARIOS_ACTUALIZADOS");
-        return ResponseEntity.ok("Horario eliminado con exito");
+        return ResponseEntity.ok(Map.of("mensaje", "Horario eliminado con exito"));
     }
 }
