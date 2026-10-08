@@ -27,13 +27,16 @@ public class HorarioService {
     private final CitaRepository citaRepository;
     private final ProfesionalRepository profesionalRepository;
     private final ProSerRepository proSerRepository;
+    private final HorarioGeneratorService horarioGeneratorService;
 
     public HorarioService(HorarioRepository horarioRepository, CitaRepository citaRepository,
-            ProfesionalRepository profesionalRepository, ProSerRepository proSerRepository) {
+            ProfesionalRepository profesionalRepository, ProSerRepository proSerRepository,
+            HorarioGeneratorService horarioGeneratorService) {
         this.horarioRepository = horarioRepository;
         this.citaRepository = citaRepository;
         this.profesionalRepository = profesionalRepository;
         this.proSerRepository = proSerRepository;
+        this.horarioGeneratorService = horarioGeneratorService;
     }
 
     @Transactional
@@ -71,6 +74,7 @@ public class HorarioService {
         }
 
         HorarioDisponible nuevoHorario = horarioRepository.save(horario);
+        horarioGeneratorService.aplicarLimite(nuevoHorario.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoHorario);
     }
 

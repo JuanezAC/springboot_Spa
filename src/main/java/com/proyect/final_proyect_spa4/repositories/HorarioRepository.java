@@ -29,4 +29,26 @@ public interface HorarioRepository extends JpaRepository<HorarioDisponible, Long
            "WHERE h.disponible = true " +
            "AND (h.fecha < :hoy OR (h.fecha = :hoy AND h.hora < :ahora))")
     int marcarExpirados(@Param("hoy") LocalDate hoy, @Param("ahora") LocalTime ahora);
+
+    @Query("SELECT h FROM HorarioDisponible h WHERE h.disponible = true " +
+           "AND h.profesional.estado = true " +
+           "AND (h.fecha > :hoy OR (h.fecha = :hoy AND h.hora > :ahora)) " +
+           "AND NOT EXISTS (SELECT c FROM Cita c WHERE c.profesional = h.profesional AND c.fecha = h.fecha AND c.hora = h.hora) " +
+           "ORDER BY h.fecha ASC, h.hora ASC")
+    List<HorarioDisponible> findPoolOrdenadoPorVencimiento(@Param("hoy") LocalDate hoy,
+            @Param("ahora") LocalTime ahora);
+
+    @Query("SELECT h FROM HorarioDisponible h WHERE h.disponible = true " +
+           "AND h.profesional.estado = true " +
+           "AND (h.fecha < :hoy OR (h.fecha = :hoy AND h.hora < :ahora)) " +
+           "AND NOT EXISTS (SELECT c FROM Cita c WHERE c.profesional = h.profesional AND c.fecha = h.fecha AND c.hora = h.hora)")
+    List<HorarioDisponible> findExpiradosEnPool(@Param("hoy") LocalDate hoy, @Param("ahora") LocalTime ahora);
+
+    @Query("SELECT h FROM HorarioDisponible h " +
+           "WHERE NOT EXISTS (SELECT c FROM Cita c WHERE c.profesional = h.profesional AND c.fecha = h.fecha AND c.hora = h.hora) " +
+           "AND (h.fecha < :hoy OR (h.fecha = :hoy AND h.hora < :ahora) " +
+           "OR h.profesional.estado IS NULL OR h.profesional.estado = false)")
+    List<HorarioDisponible> findPurgables(@Param("hoy") LocalDate hoy, @Param("ahora") LocalTime ahora);
+
+    boolean existsByProfesionalIdAndFechaAndHora(Long profesionalId, LocalDate fecha, LocalTime hora);
 }

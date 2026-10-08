@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.proyect.final_proyect_spa4.entities.Cita;
 import com.proyect.final_proyect_spa4.entities.Profesional;
@@ -24,14 +25,17 @@ public class CitaService {
     private final UsuarioRepository usuarioRepository;
     private final ProfesionalRepository profesionalRepository;
     private final ServicioRepository servicioRepository;
+    private final HorarioGeneratorService horarioGeneratorService;
 
 
     public CitaService(CitaRepository citaRepository, UsuarioRepository usuarioRepository,
-            ProfesionalRepository profesionalRepository, ServicioRepository servicioRepository) {
+            ProfesionalRepository profesionalRepository, ServicioRepository servicioRepository,
+            HorarioGeneratorService horarioGeneratorService) {
         this.citaRepository = citaRepository;
         this.usuarioRepository = usuarioRepository;
         this.profesionalRepository = profesionalRepository;
         this.servicioRepository = servicioRepository;
+        this.horarioGeneratorService = horarioGeneratorService;
     }
 
     public List<Cita> buscarTodasCitas() {
@@ -46,6 +50,7 @@ public class CitaService {
         return citaRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     public ResponseEntity<?> guardarCita(Cita cita) {
         // 1. Validar que no envíen ID al crear
         if (cita.getId() != null) {
@@ -121,7 +126,10 @@ public class CitaService {
         cita.setProfesional(profesional);
         cita.setServicio(servicio);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(citaRepository.save(cita));
+        Cita guardada = citaRepository.save(cita);
+        horarioGeneratorService.generarHorariosAleatorios(1);
+        horarioGeneratorService.aplicarLimite();
+        return ResponseEntity.status(HttpStatus.CREATED).body(guardada);
     }
 
     public ResponseEntity<?> actualizarCita(Long id, Cita citaActualizada) {
