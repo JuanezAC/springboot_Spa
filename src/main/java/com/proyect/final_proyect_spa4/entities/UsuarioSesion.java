@@ -1,9 +1,12 @@
 package com.proyect.final_proyect_spa4.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class UsuarioSesion {
     private Long id;
     private String nombre;
     private String correo;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String contrasena;
     private String rol;
 

@@ -71,6 +71,8 @@ public class UsuarioController {
 
     @PostMapping("/registro")
     public ResponseEntity<?> registrarCliente(@RequestBody Usuario usuario) {
+        // El registro público nunca puede elegir rol
+        usuario.setRol("CLIENTE");
         try {
             ResponseEntity<?> respuesta = usuarioService.guardarUsuario(usuario);
             if (respuesta.getStatusCode().is2xxSuccessful()) {
@@ -120,6 +122,11 @@ public class UsuarioController {
         if (!sesionService.esAdmin(session) && !sesionService.esMismoUsuario(session, id)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(Map.of("mensaje", "No tienes permisos para actualizar este usuario"));
+        }
+
+        // Un usuario no admin edita nombre/correo/contraseña, pero nunca su rol
+        if (!sesionService.esAdmin(session)) {
+            usuario.setRol(null);
         }
 
         try {
